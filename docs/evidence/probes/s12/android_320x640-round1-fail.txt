@@ -1,0 +1,9 @@
+during the run: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+> Task :app:connectedDebugAndroidTest
+dev.fluttera11y.flutter_a11y_techniques.S12HidingContentTest > badOpacityHiddenHasNoPanelNodeAndTheKeyboardCopies[Pixel_10a(AVD) - 17] [31mFAILED [0m
+Tests on Pixel_10a(AVD) - 17 failed: There was 1 failure(s).
+Execute dev.fluttera11y.flutter_a11y_techniques.S12HidingContentTest.badOpacityHiddenHasNoPanelNodeAndTheKeyboardCopies: FAILED
+> Task :app:connectedDebugAndroidTest FAILED
+BUILD FAILED in 2m 36s
+after reset: Physical size: 1080x2424  Physical density: 420 
+failure: org.junit.ComparisonFailure: bad-opacity: a tap where Copy is laid out expected:<Copies: [1]> but was:<Copies: [0]> (S12HidingContentTest.kt:286: one tap, placed from bounds read with node(), which scrolls; why it missed was not measured; the test now taps several points of the gap from one scrolled state)

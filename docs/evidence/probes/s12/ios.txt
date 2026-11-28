@@ -1,0 +1,416 @@
+device: iPhone 17 simulator, iOS 27.0; content size large. Lines from ProbeS12UITests (ProbeS12UITests.swift.txt), run by ios_probe.sh.txt: testTree (EL lines: XCUITest type rawValue, identifier, label, value; type 9 button, 46 other, 48 static text), testKeys, testVoiceOver (VO lines). Fixtures in probe.dart.txt.
+==== p01
+p01 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p01 EL type=48 id= label="Probe p01" value=Optional() enabled=true hittable=true frame=(154.22314453125, 76.0, 93.5537109375, 28.0)
+p01 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 156.357421875, 224.0)
+p01 EL type=48 id= label="Before p01" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 73.6484375, 20.0)
+p01 EL type=48 id= label="p01 Note" value=Optional() enabled=true hittable=true frame=(31.38189188639323, 166.0, 61.438481648763016, 20.0)
+p01 EL type=9 id= label="p01 Share" value=Optional() enabled=true hittable=true frame=(16.0, 186.0, 92.20226033528645, 48.0)
+p01 EL type=9 id= label="p01 After" value=Optional() enabled=true hittable=true frame=(16.0, 246.0, 86.96937052408855, 48.0)
+p01 EL type=48 id=p01-taps label="p01 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 306.0, 124.357421875, 20.0)
+p01 tap on button "p01 Share": p01 taps: a=1 b=0
+p01 tap at (56.0, 200.0), between Before (16.0, 134.0, 73.6484375, 20.0) and After (16.0, 246.0, 86.96937052408855, 48.0): p01 taps: a=1 b=0
+==== p02
+p02 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p02 EL type=48 id= label="Probe p02" value=Optional() enabled=true hittable=true frame=(152.875, 76.0, 96.25, 28.0)
+p02 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 402.0, 177.0)
+p02 EL type=48 id= label="Before p02" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.603515625, 20.0)
+p02 EL type=9 id= label="p02 After" value=Optional() enabled=true hittable=true frame=(16.0, 199.0, 88.88572184244792, 48.0)
+p02 EL type=48 id=p02-taps label="p02 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 259.0, 126.3125, 20.0)
+==== p03
+p03 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p03 EL type=48 id= label="Probe p03" value=Optional() enabled=true hittable=true frame=(152.48291015625, 76.0, 97.0341796875, 28.0)
+p03 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.640625, 204.0)
+p03 EL type=48 id= label="Before p03" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.931640625, 20.0)
+p03 EL type=9 id= label="p03 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 89.19105021158855, 48.0)
+p03 EL type=48 id=p03-taps label="p03 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 126.640625, 20.0)
+p03 tap at (56.0, 190.0), between Before (16.0, 134.0, 75.931640625, 20.0) and After (16.0, 226.0, 89.19105021158855, 48.0): p03 taps: a=1 b=0
+==== p04
+p04 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p04 EL type=48 id= label="Probe p04" value=Optional() enabled=true hittable=true frame=(152.34326171875, 76.0, 97.3134765625, 28.0)
+p04 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.873046875, 204.0)
+p04 EL type=48 id= label="Before p04" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 76.1640625, 20.0)
+p04 EL type=48 id= label="p04 Replacement" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 94.69737752278645, 48.0)
+p04 EL type=9 id= label="p04 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 89.46448771158855, 48.0)
+p04 EL type=48 id=p04-taps label="p04 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 126.873046875, 20.0)
+p04 tap at (56.0, 190.0), between Before (16.0, 134.0, 76.1640625, 20.0) and After (16.0, 226.0, 89.46448771158855, 48.0): p04 taps: a=1 b=0
+==== p05
+p05 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p05 EL type=48 id= label="Probe p05" value=Optional() enabled=true hittable=true frame=(152.55810546875, 76.0, 96.8837890625, 28.0)
+p05 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.517578125, 156.0)
+p05 EL type=48 id= label="Before p05" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.80859375, 20.0)
+p05 EL type=9 id= label="p05 After" value=Optional() enabled=true hittable=true frame=(16.0, 178.0, 89.1169942220052, 48.0)
+p05 EL type=48 id=p05-taps label="p05 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 238.0, 126.517578125, 20.0)
+p05 tap at (56.0, 166.0), between Before (16.0, 134.0, 75.80859375, 20.0) and After (16.0, 178.0, 89.1169942220052, 48.0): p05 taps: a=0 b=0
+==== p06
+p06 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p06 EL type=48 id= label="Probe p06" value=Optional() enabled=true hittable=true frame=(152.20361328125, 76.0, 97.5927734375, 28.0)
+p06 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.77734375, 156.0)
+p06 EL type=48 id= label="Before p06" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 76.068359375, 20.0)
+p06 EL type=9 id= label="p06 After" value=Optional() enabled=true hittable=true frame=(16.0, 178.0, 89.38474527994792, 48.0)
+p06 EL type=48 id=p06-taps label="p06 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 238.0, 126.77734375, 20.0)
+==== p07
+p07 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p07 EL type=48 id= label="Probe p07" value=Optional() enabled=true hittable=true frame=(153.19189453125, 76.0, 95.6162109375, 28.0)
+p07 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 157.560546875, 156.0)
+p07 EL type=48 id= label="Before p07" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 74.8515625, 20.0)
+p07 EL type=9 id= label="p07 After" value=Optional() enabled=true hittable=true frame=(16.0, 178.0, 88.11324055989583, 48.0)
+p07 EL type=48 id=p07-taps label="p07 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 238.0, 125.560546875, 20.0)
+p07 tap at (56.0, 166.0), between Before (16.0, 134.0, 74.8515625, 20.0) and After (16.0, 178.0, 88.11324055989583, 48.0): p07 taps: a=0 b=0
+==== p08
+p08 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p08 EL type=48 id= label="Probe p08" value=Optional() enabled=true hittable=true frame=(152.39697265625, 76.0, 97.2060546875, 28.0)
+p08 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.8046875, 204.0)
+p08 EL type=48 id= label="Before p08" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 76.095703125, 20.0)
+p08 EL type=9 id= label="p08 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 89.45082600911458, 48.0)
+p08 EL type=48 id=p08-taps label="p08 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 126.8046875, 20.0)
+==== p09
+p09 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p09 EL type=48 id= label="Probe p09" value=Optional() enabled=true hittable=true frame=(152.20361328125, 76.0, 97.5927734375, 28.0)
+p09 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.77734375, 204.0)
+p09 EL type=48 id= label="Before p09" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 76.068359375, 20.0)
+p09 EL type=9 id= label="p09 Share" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 94.61763509114583, 48.0)
+p09 EL type=9 id= label="p09 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 89.38474527994792, 48.0)
+p09 EL type=48 id=p09-taps label="p09 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 126.77734375, 20.0)
+p09 tap on button "p09 Share": p09 taps: a=0 b=0
+p09 tap at (56.0, 190.0), between Before (16.0, 134.0, 76.068359375, 20.0) and After (16.0, 226.0, 89.38474527994792, 48.0): p09 taps: a=0 b=0
+==== p10
+p10 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p10 EL type=48 id= label="Probe p10" value=Optional() enabled=true hittable=true frame=(154.27685546875, 76.0, 93.4462890625, 28.0)
+p10 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 156.015625, 204.0)
+p10 EL type=48 id= label="Before p10" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 73.306640625, 20.0)
+p10 EL type=9 id= label="p10 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 86.62757364908855, 48.0)
+p10 EL type=48 id=p10-taps label="p10 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 124.015625, 20.0)
+p10 tap at (56.0, 190.0), between Before (16.0, 134.0, 73.306640625, 20.0) and After (16.0, 226.0, 86.62757364908855, 48.0): p10 taps: a=1 b=0
+==== p11
+p11 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p11 EL type=48 id= label="Probe p11" value=Optional() enabled=true hittable=true frame=(156.07080078125, 76.0, 89.8583984375, 28.0)
+p11 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 153.69140625, 204.0)
+p11 EL type=48 id= label="Before p11" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 70.982421875, 20.0)
+p11 EL type=9 id= label="p11 Share" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 89.5043436686198, 48.0)
+p11 EL type=9 id= label="p11 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 84.27144368489583, 48.0)
+p11 EL type=48 id=p11-taps label="p11 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 121.69140625, 20.0)
+p11 tap on button "p11 Share": p11 taps: a=1 b=0
+p11 tap at (56.0, 190.0), between Before (16.0, 134.0, 70.982421875, 20.0) and After (16.0, 226.0, 84.27144368489583, 48.0): p11 taps: a=1 b=0
+==== p12
+p12 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p12 EL type=48 id= label="Probe p12" value=Optional() enabled=true hittable=true frame=(154.72265625, 76.0, 92.5546875, 28.0)
+p12 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 155.646484375, 156.0)
+p12 EL type=48 id= label="Before p12" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 72.9375, 20.0)
+p12 EL type=9 id= label="p12 After" value=Optional() enabled=true hittable=true frame=(16.0, 178.0, 86.1877950032552, 48.0)
+p12 EL type=48 id=p12-taps label="p12 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 238.0, 123.646484375, 20.0)
+p12 tap at (56.0, 166.0), between Before (16.0, 134.0, 72.9375, 20.0) and After (16.0, 178.0, 86.1877950032552, 48.0): p12 taps: a=0 b=0
+==== p13
+p13 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p13 EL type=48 id= label="Probe p13" value=Optional() enabled=true hittable=true frame=(154.43798828125, 76.0, 93.1240234375, 28.0)
+p13 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 155.974609375, 204.0)
+p13 EL type=48 id= label="Before p13" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 73.265625, 20.0)
+p13 EL type=9 id= label="p13 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 86.52730305989583, 48.0)
+p13 EL type=48 id=p13-taps label="p13 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 123.974609375, 20.0)
+p13 tap at (56.0, 190.0), between Before (16.0, 134.0, 73.265625, 20.0) and After (16.0, 226.0, 86.52730305989583, 48.0): p13 taps: a=1 b=0
+==== p14
+p14 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p14 EL type=48 id= label="Probe p14" value=Optional() enabled=true hittable=true frame=(154.29833984375, 76.0, 93.4033203125, 28.0)
+p14 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 156.20703125, 204.0)
+p14 EL type=48 id= label="Before p14" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 73.498046875, 20.0)
+p14 EL type=9 id= label="p14 Share" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 91.9994608561198, 48.0)
+p14 EL type=9 id= label="p14 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 86.76656087239583, 48.0)
+p14 EL type=48 id=p14-taps label="p14 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 124.20703125, 20.0)
+p14 tap on button "p14 Share": p14 taps: a=1 b=0
+p14 tap at (56.0, 190.0), between Before (16.0, 134.0, 73.498046875, 20.0) and After (16.0, 226.0, 86.76656087239583, 48.0): p14 taps: a=1 b=0
+==== p15
+p15 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p15 EL type=48 id= label="Probe p15" value=Optional() enabled=true hittable=true frame=(154.51318359375, 76.0, 92.9736328125, 28.0)
+p15 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 155.8515625, 204.0)
+p15 EL type=48 id= label="Before p15" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 73.142578125, 20.0)
+p15 EL type=9 id= label="p15 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 86.41907755533855, 48.0)
+p15 EL type=48 id=p15-taps label="p15 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 123.8515625, 20.0)
+p15 tap at (56.0, 190.0), between Before (16.0, 134.0, 73.142578125, 20.0) and After (16.0, 226.0, 86.41907755533855, 48.0): p15 taps: a=1 b=0
+==== p16
+p16 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p16 EL type=48 id= label="Probe p16" value=Optional() enabled=true hittable=true frame=(154.15869140625, 76.0, 93.6826171875, 28.0)
+p16 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 156.111328125, 204.0)
+p16 EL type=48 id= label="Before p16" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 73.40234375, 20.0)
+p16 EL type=9 id= label="p16 Share" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 91.91971842447917, 48.0)
+p16 EL type=9 id= label="p16 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 86.6868184407552, 48.0)
+p16 EL type=48 id=p16-taps label="p16 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 124.111328125, 20.0)
+p16 tap on button "p16 Share": p16 taps: a=0 b=0
+p16 tap at (56.0, 190.0), between Before (16.0, 134.0, 73.40234375, 20.0) and After (16.0, 226.0, 86.6868184407552, 48.0): p16 taps: a=0 b=0
+==== p17
+p17 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p17 EL type=48 id= label="Probe p17" value=Optional() enabled=true hittable=true frame=(154.93212890625, 76.0, 92.1357421875, 28.0)
+p17 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 155.16796875, 204.0)
+p17 EL type=48 id= label="Before p17" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 72.458984375, 20.0)
+p17 EL type=9 id= label="p17 Share" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 90.92165120442708, 48.0)
+p17 EL type=9 id= label="p17 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 85.68876139322917, 48.0)
+p17 EL type=48 id=p17-taps label="p17 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 123.16796875, 20.0)
+p17 tap on button "p17 Share": p17 taps: a=0 b=0
+p17 tap at (56.0, 190.0), between Before (16.0, 134.0, 72.458984375, 20.0) and After (16.0, 226.0, 85.68876139322917, 48.0): p17 taps: a=0 b=0
+==== p18
+p18 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p18 EL type=48 id= label="Probe p18" value=Optional() enabled=true hittable=true frame=(154.35205078125, 76.0, 93.2958984375, 28.0)
+p18 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 156.138671875, 204.0)
+p18 EL type=48 id= label="Before p18" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 73.4296875, 20.0)
+p18 EL type=9 id= label="p18 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 86.75290934244792, 48.0)
+p18 EL type=48 id=p18-taps label="p18 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 124.138671875, 20.0)
+p18 tap at (56.0, 190.0), between Before (16.0, 134.0, 73.4296875, 20.0) and After (16.0, 226.0, 86.75290934244792, 48.0): p18 taps: a=0 b=0
+==== p19
+p19 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p19 EL type=48 id= label="Probe p19" value=Optional() enabled=true hittable=true frame=(154.15869140625, 76.0, 93.6826171875, 28.0)
+p19 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 156.111328125, 204.0)
+p19 EL type=48 id= label="Before p19" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 73.40234375, 20.0)
+p19 EL type=9 id= label="p19 Share" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 91.91971842447917, 48.0)
+p19 EL type=9 id= label="p19 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 86.6868184407552, 48.0)
+p19 EL type=48 id=p19-taps label="p19 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 124.111328125, 20.0)
+p19 tap on button "p19 Share": p19 taps: a=1 b=0
+p19 tap at (56.0, 190.0), between Before (16.0, 134.0, 73.40234375, 20.0) and After (16.0, 226.0, 86.6868184407552, 48.0): p19 taps: a=1 b=0
+==== p20
+p20 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p20 EL type=48 id= label="Probe p20" value=Optional() enabled=true hittable=true frame=(152.9287109375, 76.0, 96.142578125, 28.0)
+p20 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.3125, 204.0)
+p20 EL type=48 id= label="Before p20" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.603515625, 20.0)
+p20 EL type=9 id= label="p20 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 88.88572184244792, 48.0)
+p20 EL type=48 id=p20-taps label="p20 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 126.3125, 20.0)
+p20 tap at (56.0, 190.0), between Before (16.0, 134.0, 75.603515625, 20.0) and After (16.0, 226.0, 88.88572184244792, 48.0): p20 taps: a=1 b=0
+==== p21
+p21 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p21 EL type=48 id= label="Probe p21" value=Optional() enabled=true hittable=true frame=(154.72265625, 76.0, 92.5546875, 28.0)
+p21 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 155.98828125, 176.0)
+p21 EL type=48 id= label="Before p21" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 73.279296875, 20.0)
+p21 EL type=48 id= label="p21 Note" value=Optional() enabled=true hittable=false frame=(0.0, 0.0, 0.0, 0.0)
+p21 EL type=9 id= label="p21 After" value=Optional() enabled=true hittable=true frame=(16.0, 198.0, 86.5295918782552, 48.0)
+p21 EL type=48 id=p21-taps label="p21 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 258.0, 123.98828125, 20.0)
+==== p22
+p22 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p22 EL type=48 id= label="Probe p22" value=Optional() enabled=true hittable=true frame=(153.37451171875, 76.0, 95.2509765625, 28.0)
+p22 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 157.943359375, 204.0)
+p22 EL type=48 id= label="Before p22" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.234375, 20.0)
+p22 EL type=9 id= label="p22 After" value=Optional() enabled=true hittable=true frame=(16.0, 226.0, 88.44594319661458, 48.0)
+p22 EL type=48 id=p22-taps label="p22 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 286.0, 125.943359375, 20.0)
+p22 EL type=9 id= label="p22 Share" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 93.67884318033855, 48.0)
+p22 tap on button "p22 Share": p22 taps: a=1 b=0
+p22 tap at (56.0, 190.0), between Before (16.0, 134.0, 75.234375, 20.0) and After (16.0, 226.0, 88.44594319661458, 48.0): p22 taps: a=1 b=0
+==== p23
+p23 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p23 EL type=48 id= label="Probe p23" value=Optional() enabled=true hittable=true frame=(153.08984375, 76.0, 95.8203125, 28.0)
+p23 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.271484375, 244.0)
+p23 EL type=48 id= label="Before p23" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.5625, 20.0)
+p23 EL type=48 id= label="p23 Banner" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 94.01835123697917, 88.0)
+p23 EL type=9 id= label="p23 After" value=Optional() enabled=true hittable=true frame=(16.0, 266.0, 88.7854512532552, 48.0)
+p23 EL type=48 id=p23-taps label="p23 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 326.0, 126.271484375, 20.0)
+p23 tap at (56.0, 210.0), between Before (16.0, 134.0, 75.5625, 20.0) and After (16.0, 266.0, 88.7854512532552, 48.0): p23 taps: a=1 b=0
+==== p24
+p24 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p24 EL type=48 id= label="Probe p24" value=Optional() enabled=true hittable=true frame=(153.21875, 76.0, 95.5625, 28.0)
+p24 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.298828125, 244.0)
+p24 EL type=48 id= label="p24 Banner" value=Optional() enabled=true hittable=true frame=(23.628316243489582, 234.0, 78.830078125, 20.0)
+p24 EL type=9 id= label="p24 After" value=Optional() enabled=true hittable=true frame=(16.0, 266.0, 88.8538106282552, 48.0)
+p24 EL type=48 id=p24-taps label="p24 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 326.0, 126.298828125, 20.0)
+p24 tap: Before or After not found
+==== p25
+p25 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p25 EL type=48 id= label="Probe p25" value=Optional() enabled=true hittable=true frame=(153.1650390625, 76.0, 95.669921875, 28.0)
+p25 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.1484375, 217.0)
+p25 EL type=48 id= label="Before p25" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.439453125, 20.0)
+p25 EL type=48 id= label="❝ p25 Quote" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 90.5234375, 20.0)
+p25 EL type=48 id= label="· · ·" value=Optional() enabled=true hittable=true frame=(50.46484375, 186.0, 21.59375, 20.0)
+p25 EL type=48 id= label="✦ ✦ ✦" value=Optional() enabled=true hittable=true frame=(40.046875, 206.0, 42.4296875, 21.0)
+p25 EL type=9 id= label="p25 After" value=Optional() enabled=true hittable=true frame=(16.0, 239.0, 88.67722574869792, 48.0)
+p25 EL type=48 id=p25-taps label="p25 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 299.0, 126.1484375, 20.0)
+==== p26
+p26 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p26 EL type=48 id= label="Probe p26" value=Optional() enabled=true hittable=true frame=(152.810546875, 76.0, 96.37890625, 28.0)
+p26 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 402.0, 217.0)
+p26 EL type=48 id= label="Before p26" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.69921875, 20.0)
+p26 EL type=48 id= label="p26 Quote" value=Optional() enabled=true hittable=true frame=(34.46484375, 166.0, 72.318359375, 20.0)
+p26 EL type=9 id= label="p26 After" value=Optional() enabled=true hittable=true frame=(16.0, 239.0, 88.94496663411458, 48.0)
+p26 EL type=48 id=p26-taps label="p26 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 299.0, 126.408203125, 20.0)
+==== p27
+p27 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p27 EL type=48 id= label="Probe p27" value=Optional() enabled=true hittable=true frame=(153.583984375, 76.0, 94.83203125, 28.0)
+p27 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 402.0, 180.0)
+p27 EL type=48 id= label="Before p27" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 74.755859375, 20.0)
+p27 EL type=48 id= label="3" value=Optional() enabled=true hittable=true frame=(32.224761962890625, 162.0, 7.55047607421875, 16.0)
+p27 EL type=48 id= label="p27 Inbox, 3 unread" value=Optional() enabled=true hittable=true frame=(56.0, 168.0, 136.0341796875, 20.0)
+p27 EL type=9 id= label="p27 After" value=Optional() enabled=true hittable=true frame=(16.0, 202.0, 87.94690958658855, 48.0)
+p27 EL type=48 id=p27-taps label="p27 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 262.0, 125.46484375, 20.0)
+==== p28
+p28 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p28 EL type=48 id= label="Probe p28" value=Optional() enabled=true hittable=true frame=(153.00390625, 76.0, 95.9921875, 28.0)
+p28 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 402.0, 180.0)
+p28 EL type=48 id= label="Before p28" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.7265625, 20.0)
+p28 EL type=48 id= label="p28 Inbox, 3 unread" value=Optional() enabled=true hittable=true frame=(56.0, 168.0, 137.0048828125, 20.0)
+p28 EL type=9 id= label="p28 After" value=Optional() enabled=true hittable=true frame=(16.0, 202.0, 89.0110575358073, 48.0)
+p28 EL type=48 id=p28-taps label="p28 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 262.0, 126.435546875, 20.0)
+==== p29
+p29 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p29 EL type=48 id= label="Probe p29" value=Optional() enabled=true hittable=true frame=(152.810546875, 76.0, 96.37890625, 28.0)
+p29 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.408203125, 224.0)
+p29 EL type=48 id= label="Before p29" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.69921875, 20.0)
+p29 EL type=48 id= label="p29 Pane one" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 93.7333984375, 20.0)
+p29 EL type=9 id= label="p29 After" value=Optional() enabled=true hittable=true frame=(16.0, 246.0, 88.94496663411458, 48.0)
+p29 EL type=48 id=p29-taps label="p29 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 306.0, 126.408203125, 20.0)
+p29 tap at (56.0, 200.0), between Before (16.0, 134.0, 75.69921875, 20.0) and After (16.0, 246.0, 88.94496663411458, 48.0): p29 taps: a=0 b=0
+==== p30
+p30 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p30 EL type=48 id= label="Probe p30" value=Optional() enabled=true hittable=true frame=(152.48291015625, 76.0, 97.0341796875, 28.0)
+p30 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.640625, 176.0)
+p30 EL type=48 id= label="Before p30" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.931640625, 20.0)
+p30 EL type=48 id= label="p30 Full text" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 85.6640625, 20.0)
+p30 EL type=9 id= label="p30 After" value=Optional() enabled=true hittable=true frame=(16.0, 198.0, 89.1796366373698, 48.0)
+p30 EL type=48 id=p30-taps label="p30 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 258.0, 126.640625, 20.0)
+==== p31
+p31 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p31 EL type=48 id= label="Probe p31" value=Optional() enabled=true hittable=true frame=(154.27685546875, 76.0, 93.4462890625, 28.0)
+p31 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 156.31640625, 176.0)
+p31 EL type=48 id= label="Before p31" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 73.607421875, 20.0)
+p31 EL type=48 id= label="p31 Share" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 68.01171875, 20.0)
+p31 EL type=9 id= label="p31 After" value=Optional() enabled=true hittable=true frame=(16.0, 198.0, 86.84630330403645, 48.0)
+p31 EL type=48 id=p31-taps label="p31 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 258.0, 124.31640625, 20.0)
+p31 tap at (56.0, 176.0), between Before (16.0, 134.0, 73.607421875, 20.0) and After (16.0, 198.0, 86.84630330403645, 48.0): p31 taps: a=1 b=0
+==== p32
+p32 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p32 EL type=48 id= label="Probe p32" value=Optional() enabled=true hittable=true frame=(152.9287109375, 76.0, 96.142578125, 28.0)
+p32 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.271484375, 176.0)
+p32 EL type=48 id= label="Before p32" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.5625, 20.0)
+p32 EL type=48 id= label="p32 Share" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 69.966796875, 20.0)
+p32 EL type=9 id= label="p32 After" value=Optional() enabled=true hittable=true frame=(16.0, 198.0, 88.76265462239583, 48.0)
+p32 EL type=48 id=p32-taps label="p32 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 258.0, 126.271484375, 20.0)
+p32 tap at (56.0, 176.0), between Before (16.0, 134.0, 75.5625, 20.0) and After (16.0, 198.0, 88.76265462239583, 48.0): p32 taps: a=1 b=0
+==== p33
+p33 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p33 EL type=48 id= label="Probe p33" value=Optional() enabled=true hittable=true frame=(152.64404296875, 76.0, 96.7119140625, 28.0)
+p33 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 402.0, 176.0)
+p33 EL type=48 id= label="Before p33" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 75.890625, 20.0)
+p33 EL type=48 id= label="p33 $30" value=Optional() enabled=true hittable=true frame=(16.0, 166.0, 58.201171875, 20.0)
+p33 EL type=48 id= label="p33 Now $24" value=Optional() enabled=true hittable=true frame=(82.201171875, 166.0, 92.02734375, 20.0)
+p33 EL type=9 id= label="p33 After" value=Optional() enabled=true hittable=true frame=(16.0, 198.0, 89.10216267903645, 48.0)
+p33 EL type=48 id=p33-taps label="p33 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 258.0, 126.599609375, 20.0)
+==== p34
+p34 EL type=9 id= label="Back" value=Optional() enabled=true hittable=true frame=(4.0, 66.0, 48.0, 48.0)
+p34 EL type=48 id= label="Probe p34" value=Optional() enabled=true hittable=true frame=(152.50439453125, 76.0, 96.9912109375, 28.0)
+p34 EL type=46 id= label="" value=Optional() enabled=true hittable=false frame=(0.0, 118.0, 158.83203125, 176.0)
+p34 EL type=48 id= label="Before p34" value=Optional() enabled=true hittable=true frame=(16.0, 134.0, 76.123046875, 20.0)
+p34 EL type=9 id= label="p34 After" value=Optional() enabled=true hittable=true frame=(16.0, 198.0, 89.34142049153645, 48.0)
+p34 EL type=48 id=p34-taps label="p34 taps: a=0 b=0" value=Optional() enabled=true hittable=true frame=(16.0, 258.0, 126.83203125, 20.0)
+p01 1 Tab(s) then Return: (gone)
+p01 2 Tab(s) then Return: p01 taps: a=1 b=0
+p01 3 Tab(s) then Return: p01 taps: a=0 b=1
+p03 1 Tab(s) then Return: (gone)
+p03 2 Tab(s) then Return: p03 taps: a=1 b=0
+p03 3 Tab(s) then Return: p03 taps: a=0 b=1
+p03 1 Tab(s) then Space: (gone)
+p03 2 Tab(s) then Space: p03 taps: a=1 b=0
+p03 3 Tab(s) then Space: p03 taps: a=0 b=1
+p04 1 Tab(s) then Return: (gone)
+p04 2 Tab(s) then Return: p04 taps: a=1 b=0
+p04 3 Tab(s) then Return: p04 taps: a=0 b=1
+p05 1 Tab(s) then Return: (gone)
+p05 2 Tab(s) then Return: p05 taps: a=1 b=0
+p05 3 Tab(s) then Return: p05 taps: a=0 b=1
+p05 1 Tab(s) then Space: (gone)
+p05 2 Tab(s) then Space: p05 taps: a=1 b=0
+p05 3 Tab(s) then Space: p05 taps: a=0 b=1
+p07 1 Tab(s) then Return: (gone)
+p07 2 Tab(s) then Return: p07 taps: a=0 b=1
+p07 3 Tab(s) then Return: (gone)
+p09 1 Tab(s) then Return: (gone)
+p09 2 Tab(s) then Return: p09 taps: a=0 b=1
+p09 3 Tab(s) then Return: (gone)
+p10 1 Tab(s) then Return: (gone)
+p10 2 Tab(s) then Return: p10 taps: a=0 b=1
+p10 3 Tab(s) then Return: (gone)
+p11 1 Tab(s) then Return: (gone)
+p11 2 Tab(s) then Return: p11 taps: a=1 b=0
+p11 3 Tab(s) then Return: p11 taps: a=0 b=1
+p12 1 Tab(s) then Return: (gone)
+p12 2 Tab(s) then Return: p12 taps: a=1 b=0
+p12 3 Tab(s) then Return: p12 taps: a=0 b=1
+p13 1 Tab(s) then Return: (gone)
+p13 2 Tab(s) then Return: p13 taps: a=1 b=0
+p13 3 Tab(s) then Return: p13 taps: a=0 b=1
+p13 1 Tab(s) then Space: (gone)
+p13 2 Tab(s) then Space: p13 taps: a=1 b=0
+p13 3 Tab(s) then Space: p13 taps: a=0 b=1
+p14 1 Tab(s) then Return: (gone)
+p14 2 Tab(s) then Return: p14 taps: a=1 b=0
+p14 3 Tab(s) then Return: p14 taps: a=0 b=1
+p15 1 Tab(s) then Return: (gone)
+p15 2 Tab(s) then Return: p15 taps: a=1 b=0
+p15 3 Tab(s) then Return: p15 taps: a=0 b=1
+p16 1 Tab(s) then Return: (gone)
+p16 2 Tab(s) then Return: p16 taps: a=1 b=0
+p16 3 Tab(s) then Return: p16 taps: a=0 b=1
+p16 1 Tab(s) then Space: (gone)
+p16 2 Tab(s) then Space: p16 taps: a=1 b=0
+p16 3 Tab(s) then Space: p16 taps: a=0 b=1
+p17 1 Tab(s) then Return: (gone)
+p17 2 Tab(s) then Return: p17 taps: a=1 b=0
+p17 3 Tab(s) then Return: p17 taps: a=0 b=1
+p18 1 Tab(s) then Return: (gone)
+p18 2 Tab(s) then Return: p18 taps: a=1 b=0
+p18 3 Tab(s) then Return: p18 taps: a=0 b=1
+p19 1 Tab(s) then Return: (gone)
+p19 2 Tab(s) then Return: p19 taps: a=0 b=1
+p19 3 Tab(s) then Return: (gone)
+p20 1 Tab(s) then Return: (gone)
+p20 2 Tab(s) then Return: p20 taps: a=0 b=1
+p20 3 Tab(s) then Return: (gone)
+p22 1 Tab(s) then Return: (gone)
+p22 2 Tab(s) then Return: p22 taps: a=1 b=0
+p22 3 Tab(s) then Return: p22 taps: a=0 b=1
+p22 1 Tab(s) then Space: (gone)
+p22 2 Tab(s) then Space: p22 taps: a=1 b=0
+p22 3 Tab(s) then Space: p22 taps: a=0 b=1
+p23 1 Tab(s) then Return: (gone)
+p23 2 Tab(s) then Return: p23 taps: a=1 b=0
+p23 3 Tab(s) then Return: p23 taps: a=0 b=1
+p24 1 Tab(s) then Return: (gone)
+p24 2 Tab(s) then Return: p24 taps: a=1 b=0
+p24 3 Tab(s) then Return: p24 taps: a=0 b=1
+p29 1 Tab(s) then Return: (gone)
+p29 2 Tab(s) then Return: p29 taps: a=0 b=1
+p29 3 Tab(s) then Return: (gone)
+p31 1 Tab(s) then Return: (gone)
+p31 2 Tab(s) then Return: p31 taps: a=1 b=0
+p31 3 Tab(s) then Return: p31 taps: a=0 b=1
+p31 1 Tab(s) then Space: (gone)
+p31 2 Tab(s) then Space: p31 taps: a=1 b=0
+p31 3 Tab(s) then Space: p31 taps: a=0 b=1
+p32 1 Tab(s) then Return: (gone)
+p32 2 Tab(s) then Return: p32 taps: a=0 b=1
+p32 3 Tab(s) then Return: (gone)
+VO p01 walk: Probe p01 / Before p01 / p01 Note / p01 Share Button / p01 After Button / p01 taps: a=0 b=0
+VO p02 walk: Probe p02 / Before p02 / p02 After Button / p02 taps: a=0 b=0
+VO p03 walk: Probe p03 / Before p03 / p03 After Button / p03 taps: a=0 b=0
+VO p04 walk: Probe p04 / Before p04 / p04 Replacement / p04 After Button / p04 taps: a=0 b=0
+VO p05 walk: Probe p05 / Before p05 / p05 After Button / p05 taps: a=0 b=0
+VO p06 walk: Probe p06 / Before p06 / p06 After Button / p06 taps: a=0 b=0
+VO p07 walk: Probe p07 / Before p07 / p07 After Button / p07 taps: a=0 b=0
+VO p08 walk: Probe p08 / Before p08 / p08 After Button / p08 taps: a=0 b=0
+VO p09 walk: Probe p09 / Before p09 / p09 Share Button / p09 After Button / p09 taps: a=0 b=0
+VO p10 walk: Probe p10 / Before p10 / p10 After Button / p10 taps: a=0 b=0
+VO p11 walk: Probe p11 / Before p11 / p11 Share Button / p11 After Button / p11 taps: a=0 b=0
+VO p12 walk: Probe p12 / Before p12 / p12 After Button / p12 taps: a=0 b=0
+VO p13 walk: Probe p13 / Before p13 / p13 After Button / p13 taps: a=0 b=0
+VO p14 walk: Probe p14 / Before p14 / p14 Share Button / p14 After Button / p14 taps: a=0 b=0
+VO p15 walk: Probe p15 / Before p15 / p15 After Button / p15 taps: a=0 b=0
+VO p16 walk: Probe p16 / Before p16 / p16 Share Button / p16 After Button / p16 taps: a=0 b=0
+VO p17 walk: Probe p17 / Before p17 / p17 Share Button / p17 After Button / p17 taps: a=0 b=0
+VO p18 walk: Probe p18 / Before p18 / p18 After Button / p18 taps: a=0 b=0
+VO p19 walk: Probe p19 / Before p19 / p19 Share Button / p19 After Button / p19 taps: a=0 b=0
+VO p20 walk: Probe p20 / Before p20 / p20 After Button / p20 taps: a=0 b=0
+VO p21 walk: Probe p21 / Before p21 / p21 After Button / p21 taps: a=0 b=0
+VO p22 walk: Probe p22 / Before p22 / p22 Share Button / p22 After Button / p22 taps: a=0 b=0
+VO p23 walk: Probe p23 / Before p23 / p23 Banner / p23 After Button / p23 taps: a=0 b=0
+VO p24 walk: Probe p24 / p24 Banner / p24 After Button / p24 taps: a=0 b=0
+VO p25 walk: Probe p25 / Before p25 / ❝ p25 Quote / · · · / ✦ ✦ ✦ / p25 After Button / p25 taps: a=0 b=0
+VO p26 walk: Probe p26 / Before p26 / p26 Quote / p26 After Button / p26 taps: a=0 b=0
+VO p27 walk: Probe p27 / Before p27 / 3 / p27 Inbox, 3 unread / p27 After Button / p27 taps: a=0 b=0
+VO p28 walk: Probe p28 / Before p28 / p28 Inbox, 3 unread / p28 After Button / p28 taps: a=0 b=0
+VO p29 walk: Probe p29 / Before p29 / p29 Pane one / p29 After Button / p29 taps: a=0 b=0
+VO p30 walk: Probe p30 / Before p30 / p30 Full text / p30 After Button / p30 taps: a=0 b=0
+VO p31 walk: Probe p31 / Before p31 / p31 Share / p31 After Button / p31 taps: a=0 b=0
+VO p32 walk: Probe p32 / Before p32 / p32 Share / p32 After Button / p32 taps: a=0 b=0
+VO p33 walk: Probe p33 / Before p33 / p33 $30 / p33 Now $24 / p33 After Button / p33 taps: a=0 b=0
+VO p34 walk: Probe p34 / Before p34 / p34 After Button / p34 taps: a=0 b=0

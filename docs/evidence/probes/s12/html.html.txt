@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<!-- S12 probe: plain HTML comparison, served beside the probe build as html.html (kept as docs/evidence/probes/s12/html.html.txt). -->
+<html lang="en"><head><meta charset="utf-8"><title>S12 HTML comparison</title></head>
+<body>
+<p>h00 Before</p>
+<button id="b-plain">h01 Plain button</button>
+<div aria-hidden="true"><p>h02 Text in aria-hidden</p><button id="b-aria-hidden">h02 Button in aria-hidden</button></div>
+<div inert><p>h03 Text in inert</p><button id="b-inert">h03 Button in inert</button></div>
+<div hidden><p>h04 Text in hidden</p><button id="b-hidden">h04 Button in hidden</button></div>
+<div style="opacity:0"><p>h05 Text at opacity 0</p><button id="b-opacity">h05 Button at opacity 0</button></div>
+<div style="visibility:hidden"><p>h06 Text in visibility hidden</p><button id="b-visibility">h06 Button in visibility hidden</button></div>
+<p><span aria-hidden="true">✦ ✦ ✦ </span>h07 Note after a hidden ornament</p>
+<p>✦ ✦ ✦ h08 Note after an ornament, not hidden</p>
+<button id="b-after">h09 After</button>
+</body></html>
