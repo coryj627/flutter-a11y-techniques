@@ -1,0 +1,24 @@
+#!/bin/sh
+# Under tool/with_devices.py, from the worktree root: the emulator's and the
+# simulator's accessibility settings read, V12's device layers run, and the
+# settings read again and compared. Kept as
+# docs/evidence/probes/v12/evidence_with_state.sh.txt.
+OUT=$1
+ADB="$HOME/Library/Android/sdk/platform-tools/adb"
+snap() {
+  for ns in system secure global; do "$ADB" shell settings list $ns | sort > "$OUT/android-$ns-$1.txt"; done
+  "$ADB" shell cmd uimode night > "$OUT/android-night-$1.txt"
+  "$ADB" shell wm size > "$OUT/android-wm-$1.txt"; "$ADB" shell wm density >> "$OUT/android-wm-$1.txt"
+  xcrun simctl spawn booted defaults read com.apple.Accessibility > "$OUT/ios-a11y-$1.txt" 2>&1
+  echo "$(xcrun simctl ui booted appearance) $(xcrun simctl ui booted content_size) $(xcrun simctl ui booted increase_contrast)" > "$OUT/ios-ui-$1.txt"
+}
+echo "VoiceOver before: $(xcrun simctl spawn booted defaults read com.apple.Accessibility VoiceOverTouchEnabled 2>&1)"; echo "TalkBack services before: $("$ADB" shell settings get secure enabled_accessibility_services)"
+snap before
+python3 tool/evidence.py V12 --only android,ios,voiceover-ios
+echo "evidence exit $?"
+snap after
+echo "VoiceOver after: $(xcrun simctl spawn booted defaults read com.apple.Accessibility VoiceOverTouchEnabled 2>&1)"; echo "TalkBack services after: $("$ADB" shell settings get secure enabled_accessibility_services)"
+for f in android-system android-secure android-global android-night android-wm ios-a11y ios-ui; do
+  if diff "$OUT/$f-before.txt" "$OUT/$f-after.txt" > "$OUT/$f-diff.txt"; then echo "$f: unchanged"; else echo "$f: changed:"; cat "$OUT/$f-diff.txt"; fi
+done
+exit 0

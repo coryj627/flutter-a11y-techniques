@@ -1,0 +1,313 @@
+{
+    AXSDidResetD22Preferences = 1;
+    AXSScrollActionDomainMigrationCompleted = 1;
+    AXSSystemUIProcessAppSmartInvertEnabledPreference = 0;
+    AccessibilityEnabled = 0;
+    ApplicationAccessibilityEnabled = 0;
+    AuditInspectionModeEnabled = 0;
+    AutomationEnabled = 0;
+    BrailleEightDotMode = 0;
+    BrailleInputDeviceConnected = 0;
+    CurrentRotorTypeSimple = 3;
+    DarkenSystemColors = 0;
+    DifferentiateWithoutColor = 0;
+    EnhancedBackgroundContrastEnabled = 0;
+    EnhancedTextLegibilityEnabled = 0;
+    FullKeyboardAccessEnabled = 0;
+    FullKeyboardAccessFocusRingEnabled = 0;
+    FullKeyboardAccessPassthroughModeEnabled = 0;
+    GrayscaleDisplay = 0;
+    HearingAidCompliance = 0;
+    IncreaseButtonLegibilityEnabled = 0;
+    InvertColorsEnabled = 0;
+    LocalizedStringLookupInfoEnabled = 0;
+    PointerAllowAppCustomizationEnabled = 1;
+    PointerEffectScalingEnabled = 1;
+    PointerIncreasedContrastEnabled = 0;
+    PrefersNonBlinkingCursorIndicator = 0;
+    ReduceMotionAutoplayAnimatedImagesEnabled = 1;
+    ReduceMotionAutoplayVideoPreviewsEnabled = 1;
+    ReduceMotionEnabled = 0;
+    ReduceMotionReduceSlideTransitionsPreference = 0;
+    VoiceOverSkipNotificationAuthForAutomation = 0;
+    VoiceOverTouchBrailleLanguageRotor =     (
+    );
+    VoiceOverTouchEnabled = 0;
+    VoiceOverTouchLanguageRotor =     (
+                {
+            Enabled = 0;
+            RotorItem = "ar-001";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "bg-BG";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "bho-IN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "bn-IN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "ca-ES";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "ca-ES-u-sd-esvc";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "cs-CZ";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "da-DK";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "de-DE";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "el-GR";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "en-AU";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "en-GB";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "en-GB-u-sd-gbsct";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "en-IE";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "en-IN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "en-SA";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "en-US";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "en-ZA";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "es-AR";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "es-CL";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "es-CO";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "es-ES";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "es-MX";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "eu-ES";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "fa-IR";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "fi-FI";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "fr-BE";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "fr-CA";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "fr-FR";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "gl-ES";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "he-IL";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "hi-IN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "hr-HR";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "hu-HU";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "id-ID";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "it-IT";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "ja-JP";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "kk-KZ";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "kn-IN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "ko-KR";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "lt-LT";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "mr-IN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "ms-MY";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "nb-NO";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "nl-BE";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "nl-NL";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "pl-PL";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "pt-BR";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "pt-PT";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "ro-RO";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "ru-RU";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "sk-SK";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "sl-SI";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "sv-SE";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "sz-CN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "ta-IN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "te-IN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "th-TH";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "tr-TR";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "uk-UA";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "vi-VN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "wuu-CN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "zh-CN";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "zh-CN-u-sd-cnln";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "zh-CN-u-sd-cnsc";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "zh-CN-u-sd-cnsn";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "zh-HK";
+        },
+                {
+            Enabled = 0;
+            RotorItem = "zh-TW";
+        }
+    );
+    VoiceOverTouchUsageConfirmed = 1;
+    VoiceOverTouchUserHasReadNoHomeButtonGestureDescription = 1;
+    kVOTOriginaKBAttachedKey = 0;
+}

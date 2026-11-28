@@ -1,0 +1,170 @@
+"""V12 probe runner for Android (throwaway; kept as
+docs/evidence/probes/v12/probe_android.py.txt). Run under the device lock:
+
+  python3 tool/with_devices.py --label "probe V12 android" -- python3 <this> <repo> <out>
+
+Installs the probe build (lib/probe.dart, built beforehand with
+`fvm flutter build apk --debug -t lib/probe.dart`), starts it, and then turns
+each system setting on through adb (`settings put`, `cmd uimode`) and off
+again, a few seconds apart, logging a V12STEP marker before each change. The
+probe logs a V12PROBE line whenever anything it shows changes. Every setting
+is read before the run and put back after it, whatever happens; the values
+read back at the end are printed.
+"""
+import os
+import subprocess
+import sys
+import time
+
+ROOT = sys.argv[1]
+OUT = sys.argv[2]
+sys.path.insert(0, os.path.join(ROOT, "tool"))
+import talkback  # noqa: E402
+
+ADB = talkback.ADB
+PKG = "dev.fluttera11y.flutter_a11y_techniques"
+APK = os.path.join(ROOT, "build/app/outputs/flutter-apk/app-debug.apk")
+
+# (namespace, name) of every setting the run may change.
+SETTINGS = [
+    ("system", "font_scale"),
+    ("global", "transition_animation_scale"),
+    ("global", "window_animation_scale"),
+    ("global", "animator_duration_scale"),
+    ("secure", "accessibility_display_inversion_enabled"),
+    ("secure", "font_weight_adjustment"),
+    ("secure", "high_text_contrast_enabled"),
+    ("secure", "contrast_level"),
+    ("system", "time_12_24"),
+    ("secure", "accessibility_display_daltonizer_enabled"),
+    ("secure", "accessibility_display_daltonizer"),
+    ("secure", "enabled_accessibility_services"),
+    ("secure", "accessibility_enabled"),
+]
+
+
+def sh(*args, check=False):
+    run = subprocess.run([ADB, "shell", *args], capture_output=True, text=True, timeout=60)
+    if check and run.returncode != 0:
+        raise RuntimeError(f"adb shell {' '.join(args)}: {run.stderr}")
+    return run.stdout.strip()
+
+
+def get(ns, name):
+    v = sh("settings", "get", ns, name)
+    return None if v == "null" else v
+
+
+def put(ns, name, value):
+    if value is None:
+        sh("settings", "delete", ns, name, check=True)
+    else:
+        sh("settings", "put", ns, name, value or '""', check=True)
+
+
+def step(text):
+    print("STEP", text, flush=True)
+    sh("log", "-t", "V12STEP", text.replace(" ", "_"))
+
+
+def main():
+    print("device:", sh("getprop", "ro.build.version.release"), "API", sh("getprop", "ro.build.version.sdk"))
+    print("uimode help:", sh("cmd", "uimode", "help")[:3000])
+    original = {key: get(*key) for key in SETTINGS}
+    night = sh("cmd", "uimode", "night")
+    contrast = sh("cmd", "uimode", "contrast")
+    print("original:", original, "night:", night, "contrast:", contrast)
+    subprocess.run([ADB, "install", "-r", APK], check=True, capture_output=True)
+    subprocess.run([ADB, "logcat", "-c"])
+    log_path = os.path.join(OUT, "android-logcat-raw.txt")
+    with open(log_path, "w") as log:
+        reader = subprocess.Popen([ADB, "logcat", "-v", "time", "-s", "flutter:I", "V12STEP:*",
+                                   "ActivityTaskManager:I"],
+                                  stdout=log, stderr=subprocess.DEVNULL)
+        try:
+            run(original)
+        finally:
+            for key, value in original.items():
+                try:
+                    put(*key, value)
+                except Exception as e:  # noqa: BLE001
+                    print("RESTORE FAILED", key, value, e)
+            sh("cmd", "uimode", "night", night.split(":")[-1].strip() if ":" in night else "no")
+            time.sleep(3)
+            reader.terminate()
+            reader.wait()
+            sh("am", "force-stop", PKG)
+    after = {key: get(*key) for key in SETTINGS}
+    print("restored:", after, "night:", sh("cmd", "uimode", "night"), "contrast:", sh("cmd", "uimode", "contrast"))
+    print("same as before:", after == original)
+
+
+def launch():
+    sh("am", "force-stop", PKG)
+    sh("monkey", "-p", PKG, "1")
+    time.sleep(8)
+
+
+def toggle(label, on, off, wait=4):
+    step(f"{label} on")
+    on()
+    time.sleep(wait)
+    step(f"{label} off")
+    off()
+    time.sleep(wait)
+
+
+def run(original):
+    launch()
+    step("baseline")
+    time.sleep(2)
+    toggle("dark", lambda: sh("cmd", "uimode", "night", "yes"),
+           lambda: sh("cmd", "uimode", "night", "no"))
+    toggle("font_scale 1.5", lambda: put("system", "font_scale", "1.5"),
+           lambda: put("system", "font_scale", "1.0"))
+    toggle("font_scale 2.0", lambda: put("system", "font_scale", "2.0"),
+           lambda: put("system", "font_scale", "1.0"))
+    toggle("animator_duration_scale 0", lambda: put("global", "animator_duration_scale", "0"),
+           lambda: put("global", "animator_duration_scale", "1.0"))
+    toggle("transition_animation_scale 0", lambda: put("global", "transition_animation_scale", "0"),
+           lambda: put("global", "transition_animation_scale", "1.0"))
+    toggle("remove animations (all three 0)",
+           lambda: [put("global", n, "0") for n in
+                    ("transition_animation_scale", "window_animation_scale", "animator_duration_scale")],
+           lambda: [put("global", n, "1.0") for n in
+                    ("transition_animation_scale", "window_animation_scale", "animator_duration_scale")])
+    toggle("invert colours", lambda: put("secure", "accessibility_display_inversion_enabled", "1"),
+           lambda: put("secure", "accessibility_display_inversion_enabled", "0"))
+    toggle("high contrast text", lambda: put("secure", "high_text_contrast_enabled", "1"),
+           lambda: put("secure", "high_text_contrast_enabled", "0"))
+    toggle("contrast_level 1.0 (setting)", lambda: put("secure", "contrast_level", "1.0"),
+           lambda: put("secure", "contrast_level", "0.0"))
+    toggle("contrast high (cmd uimode)", lambda: sh("cmd", "uimode", "contrast", "1.0"),
+           lambda: sh("cmd", "uimode", "contrast", "0.0"))
+    toggle("time 24 hour", lambda: put("system", "time_12_24", "24"),
+           lambda: put("system", "time_12_24", "12"))
+    toggle("colour correction", lambda: put("secure", "accessibility_display_daltonizer_enabled", "1"),
+           lambda: put("secure", "accessibility_display_daltonizer_enabled", "0"))
+    step("uiautomator dump, no accessibility service")
+    sh("uiautomator", "dump", "/sdcard/v12.xml")
+    time.sleep(4)
+    step("relaunch after dump")
+    launch()
+    time.sleep(2)
+    toggle("bold text", lambda: put("secure", "font_weight_adjustment", "300"),
+           lambda: put("secure", "font_weight_adjustment", "0"), wait=8)
+    step("relaunch before TalkBack")
+    launch()
+    toggle("talkback",
+           lambda: (put("secure", "enabled_accessibility_services",
+                        talkback.with_talkback(original[("secure", "enabled_accessibility_services")])),
+                    put("secure", "accessibility_enabled", "1")),
+           lambda: (put("secure", "enabled_accessibility_services",
+                        original[("secure", "enabled_accessibility_services")] or ""),
+                    put("secure", "accessibility_enabled", original[("secure", "accessibility_enabled")] or "0")),
+           wait=10)
+    step("end")
+
+
+if __name__ == "__main__":
+    main()

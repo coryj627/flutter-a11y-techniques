@@ -555,7 +555,7 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
     def test_the_strict_techniques(self):
-        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10", "S11", "S12", "S16"})
+        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10", "S11", "S12", "S16", "V12"})
 
     def test_c05_has_no_silent_rows(self):
         self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
@@ -1022,6 +1022,81 @@ class S16WholeUtterances(unittest.TestCase):
                 (c, ["Chosen: none", "Chosen: none"], False),
             ]
         self.check(cases)
+
+
+class V12WholeUtterances(unittest.TestCase):
+    """V12's rows are whole-utterance forms ("== A"), one per line of an
+    example. Each case names a reading a word match would pass and the row
+    must fail: the line said twice, an added role, a wrong value or number,
+    and each sibling line's text in its place."""
+
+    LISTS = ("good-media-query", "bad-read-once")
+    KEYS = ("navigation", "bold", "contrast", "invert", "animations", "labels", "dark", "scale")
+
+    def check(self, cases):
+        for ident, fragments, right in cases:
+            got = tb.problems(ident, fragments)
+            if right:
+                self.assertEqual(got, [], f"{ident}: {fragments}")
+            else:
+                self.assertTrue(got, f"{ident}: {fragments} should be wrong")
+
+    def text(self, ident):
+        return tb.EXPECT[ident][0][0][3:]
+
+    def test_every_v12_row_is_one_whole_utterance(self):
+        rows = [i for i in tb.EXPECT if i.startswith("v12-")]
+        # Two lists of eight lines, and two motion lines.
+        self.assertEqual(len(rows), 18)
+        for ident in rows:
+            must, must_not = tb.EXPECT[ident]
+            self.assertEqual(len(must), 1, ident)
+            self.assertTrue(must[0].startswith("== "), ident)
+            self.assertNotIn("/", must[0], ident)
+            self.assertEqual(must_not, [], ident)
+
+    def test_the_lists_differ_only_in_accessible_navigation(self):
+        good = [self.text(f"v12-good-media-query-{k}") for k in self.KEYS]
+        bad = [self.text(f"v12-bad-read-once-{k}") for k in self.KEYS]
+        self.assertEqual(good[0], "Accessible navigation: on")
+        self.assertEqual(bad[0], "Accessible navigation: off")
+        self.assertEqual(good[1:], bad[1:])
+
+    def test_a_settings_line(self):
+        cases = []
+        for slug in self.LISTS:
+            ids = [f"v12-{slug}-{k}" for k in self.KEYS]
+            for ident in ids:
+                text = self.text(ident)
+                flipped = text.replace(": on", ": OFF").replace(": off", ": on").replace(": OFF", ": off")
+                cases += [
+                    (ident, [text], True),
+                    (ident, [text.upper()], True),
+                    (ident, [text, tb.USAGE_HINT], True),
+                    (ident, [text, text], False),
+                    (ident, [text, "Heading"], False),
+                    (ident, [text, "Button"], False),
+                    (ident, [text, tb.USAGE_HINT, tb.USAGE_HINT], False),
+                    (ident, [], False),
+                ]
+                if text != flipped:
+                    cases.append((ident, [flipped], False))
+                # Every sibling line in this one's place.
+                cases += [(ident, [self.text(other)], False) for other in ids if other != ident]
+            scale = f"v12-{slug}-scale"
+            cases += [(scale, ["Text scale: 150%"], False), (scale, ["Text scale: 100"], False),
+                      (scale, ["Text scale:", "100%"], False)]
+        self.check(cases)
+
+    def test_a_motion_line(self):
+        for ident in ("v12-good-motion-motion", "v12-bad-animations-only-motion"):
+            self.check([
+                (ident, ["Reduce motion: off"], True),
+                (ident, ["Reduce motion: on"], False),
+                (ident, ["Reduce motion: off", "Reduce motion: off"], False),
+                (ident, ["Reduce motion"], False),
+                (ident, ["Disable animations: off"], False),
+            ])
 
 
 class Cut(str):

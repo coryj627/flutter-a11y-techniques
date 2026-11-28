@@ -1,0 +1,25 @@
+#!/bin/sh
+# Under tool/with_devices.py, from the worktree root: V12's Android tree
+# tests with the emulator started as CI's is, the three animation scales
+# 0.0 (the emulator action's `disable-animations: true`), and every scale
+# put back afterwards and checked. Kept as
+# docs/evidence/probes/v12/android_ci_animations.sh.txt.
+ADB="$HOME/Library/Android/sdk/platform-tools/adb"
+SCALES="transition_animation_scale window_animation_scale animator_duration_scale"
+for k in $SCALES; do echo "$k before: $("$ADB" shell settings get global $k)"; done
+before=$(for k in $SCALES; do "$ADB" shell settings get global $k; done | tr '\n' ' ')
+restore() {
+  set -- $before
+  for k in $SCALES; do
+    v=$1; shift
+    if [ "$v" = "null" ]; then "$ADB" shell settings delete global $k; else "$ADB" shell settings put global $k "$v"; fi
+  done
+  after=$(for k in $SCALES; do "$ADB" shell settings get global $k; done | tr '\n' ' ')
+  echo "after restore: $after"
+  [ "$after" = "$before" ] && echo "scales unchanged" || echo "SCALES DIFFER"
+}
+trap restore EXIT
+for k in $SCALES; do "$ADB" shell settings put global $k 0.0; done
+echo "during the run: $(for k in $SCALES; do "$ADB" shell settings get global $k; done | tr '\n' ' ')"
+python3 tool/evidence.py V12 --only android --no-build
+echo "evidence exit $?"

@@ -1,0 +1,59 @@
+#!/bin/sh
+# V12 probe on iOS, round 3 (round 2 again with the native app fixed:
+# its first build was stopped at launch by iOS 27 for not adopting the
+# scene life cycle), under tool/with_devices.py (throwaway; kept as
+# docs/evidence/probes/v12/ios_round3.sh.txt). Run from the worktree root
+# after the probe build and `xcodebuild build-for-testing` into
+# build/ios_uitest (the derived data the round 2 tests were built
+# into), with NativeSettings.app built by build_native_ios.sh.
+#
+# 1. testRound2WatchFlutter, then testRound2WatchNative, each reading its
+#    app about once a second while this script changes appearance, text
+#    size, and increase contrast with `xcrun simctl ui`, logging each step
+#    with its time; each put back at the end of the steps.
+# 2. testRound2Appearance (XCUIDevice.appearance).
+# 3. testRound2Settings (the Settings app; each switch put back).
+# 4. testRestore, which puts every switch the probes touch back to off
+#    (the auto-play ones on), then the accessibility defaults compared with
+#    the ones read before round 1.
+OUT=$1
+NATIVE=$2
+DD=../build/ios_uitest_restore
+xcrun simctl list devices booted | grep -i "iphone"
+echo "== simctl ui before: $(xcrun simctl ui booted appearance) $(xcrun simctl ui booted content_size) $(xcrun simctl ui booted increase_contrast)"
+xcrun simctl install booted "$NATIVE" || exit 1
+xcrun simctl install booted build/ios_uitest_restore/Build/Products/Debug-iphonesimulator/Runner.app || exit 1
+cd ios || exit 1
+test1() {
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/ProbeV12UITests/$1" \
+    -derivedDataPath $DD 2>&1 | grep --line-buffered -E "V12IOS|error:|passed|failed|skipped" | grep --line-buffered -v "Test Suite"
+}
+for which in ${WATCH:-Native Flutter}; do
+  : > "$OUT/watch-$which.txt"
+  test1 testRound2Watch$which > "$OUT/watch-$which.txt" &
+  T=$!
+  i=0
+  until grep -q "watch .* start" "$OUT/watch-$which.txt" || [ $i -gt 240 ]; do sleep 1; i=$((i+1)); done
+  sleep 6
+  for s in "appearance dark" "appearance light" "content_size accessibility-extra-extra-extra-large" \
+           "content_size large" "increase_contrast enabled" "increase_contrast disabled"; do
+    echo "V12STEP $(date +%H:%M:%S) $which $s" >> "$OUT/watch-steps.txt"
+    xcrun simctl ui booted $s
+    sleep 9
+  done
+  wait $T
+  cat "$OUT/watch-$which.txt"
+done
+echo "== simctl ui after watch: $(xcrun simctl ui booted appearance) $(xcrun simctl ui booted content_size) $(xcrun simctl ui booted increase_contrast)"
+for t in ${TESTS:-testRound2Appearance testRound2Settings testRestore}; do echo "== $t"; test1 $t; done
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+xcrun simctl terminate booted dev.fluttera11y.v12nativesettings 2>/dev/null
+xcrun simctl terminate booted com.apple.Preferences 2>/dev/null
+xcrun simctl uninstall booted dev.fluttera11y.v12nativesettings
+cd ..
+echo "== appearance after: $(xcrun simctl ui booted appearance) $(xcrun simctl ui booted content_size) $(xcrun simctl ui booted increase_contrast)"
+xcrun simctl spawn booted defaults read com.apple.Accessibility > "$OUT/ios-a11y-defaults-after-round2.txt" 2>&1
+diff "$OUT/ios-a11y-defaults-before.txt" "$OUT/ios-a11y-defaults-after-round2.txt" && echo "defaults unchanged"
+exit 0

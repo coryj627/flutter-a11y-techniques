@@ -101,9 +101,10 @@ example is added without a decision.
 | [S15 Hints](#s15-hints) | 5 | 2 | 0 | 3 |
 | [S16 Language of page and parts](#s16-language-of-page-and-parts) | 3 | 0 | 0 | 3 |
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
+| [V12 Detecting accessibility settings](#v12-detecting-accessibility-settings) | 2 | 0 | 0 | 2 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 146 | 51 | 13 | 82 |
+| All | 148 | 51 | 13 | 84 |
 
 ## C01 Button
 
@@ -529,6 +530,21 @@ Flagged: `good-cupertino`, `good-custom`.
 | `good-cupertino` | An `Actions` for Enter on the web round the `CupertinoButton` | `CupertinoButton` | Enter on the web ([FL-002](flutter-limitations.md#fl-002)) | R1, R2, R4: iOS Accessibility Identifier, Apple: accessibilityIdentifier, Project rule | custom |
 | `good-custom` | A button drawn by hand: `Semantics(button: true, label:, onTap:)`, with focus, keys, and a focus ring of its own | None for a drawn control | none | R1, R2, R4: iOS Accessibility Identifier, Apple: accessibilityIdentifier, Project rule | custom |
 | `good-field` | `TestId` round a `TextField` | `Semantics.identifier` | As `good-merged` | R1, R2, R3, R4: iOS Accessibility Identifier, Apple: accessibilityIdentifier, Project rule | borderline: As `good-merged`: the project's `TestId` round a framework widget. |
+
+## V12 Detecting accessibility settings
+
+Nothing flagged. Each good example reads a setting through the framework's
+documented API, as its documentation says to: `MediaQuery`'s `...Of`
+methods, and for the one flag `MediaQueryData` does not carry,
+`AccessibilityFeatures.reduceMotion`, read again from
+`WidgetsBindingObserver.didChangeAccessibilityFeatures`. Nothing with a role,
+a state, focus, keys, or an announcement is built; the lines are plain
+text.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-media-query` | Nothing: each setting read with `MediaQuery.boldTextOf` and the other `...Of` methods, shown as text | `MediaQuery` | none | R1, R2, R3: iOS Accessibility Detection, Flutter API: MediaQuery | not custom |
+| `good-motion` | Nothing built: `MediaQuery.disableAnimationsOf` or `AccessibilityFeatures.reduceMotion`, read again when `WidgetsBindingObserver.didChangeAccessibilityFeatures` is called, as the framework's own `CupertinoMenuAnchor` reads both | `MediaQuery`, `WidgetsBindingObserver` | `MediaQueryData` has no `reduceMotion`, and iOS's Reduce Motion never sets `disableAnimations` ([FL-502](flutter-limitations.md#fl-502)) | R2, R3, R4: iOS Accessibility Detection, Flutter API: AccessibilityFeatures, WidgetsBindingObserver | not custom |
 
 ## V13 Minimum touch target size
 

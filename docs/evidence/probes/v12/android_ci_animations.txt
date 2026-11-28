@@ -1,0 +1,17 @@
+transition_animation_scale before: 1.0
+window_animation_scale before: 1.0
+animator_duration_scale before: null
+during the run: 0.0 0.0 0.0 
+[V12] android: running (log: build/evidence/V12/android.log)
+[V12] android: ok, 95 s
+
+Summary
+=======
+V12:
+  android        PASS     95 s
+
+Result: PASS
+evidence exit 0
+Deleted 1 rows
+after restore: 1.0 1.0 null 
+scales unchanged

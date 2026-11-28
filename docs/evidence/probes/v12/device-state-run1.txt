@@ -1,0 +1,32 @@
+[V12] build android: running (log: build/evidence/V12/build-android.log)
+[V12] build android: ok, 11 s
+[V12] build ios: running (log: build/evidence/V12/build-ios.log)
+[V12] build ios: ok, 12 s
+[V12] build web: running (log: build/evidence/V12/build-web.log)
+[V12] build web: ok, 13 s
+[V12] android: running (log: build/evidence/V12/android.log)
+[V12] android: ok, 111 s
+[V12] ios: running (log: build/evidence/V12/ios.log)
+[V12] ios: ok, 403 s
+[V12] voiceover-ios: running (log: build/evidence/V12/voiceover-ios.log)
+[V12] voiceover-ios: ok, 112 s
+[V12] web: running (log: build/evidence/V12/web.log)
+[V12] web: ok, 30 s
+
+Summary
+=======
+V12:
+  android        PASS     111 s
+  ios            PASS     403 s
+  voiceover-ios  PASS     112 s
+  web            PASS     30 s
+
+Result: PASS
+evidence exit 0
+android-system: unchanged
+android-secure: unchanged
+android-global: unchanged
+android-night: unchanged
+android-wm: unchanged
+ios-a11y: unchanged
+ios-ui: unchanged

@@ -1,0 +1,81 @@
+   11-28 01:34:53.136 MAIN main started=1795847693100 ensure=true web=false
+   11-28 01:34:53.991 first reading {'mq.accessibleNavigation': False, 'mq.boldText': False, 'mq.highContrast': False, 'mq.invertColors': False, 'mq.disableAnimations': False, 'mq.onOffSwitchLabels': False, 'mq.supportsAnnounce': False, 'mq.textScale100': 100.0, 'mq.textScale14': 14.0, 'mq.platformBrightness': 'light', 'mq.alwaysUse24HourFormat': False, 'mq.navigationMode': 'traditional', 'mq.supportsShowingSystemContextMenu': False, 'mq.lineHeightScaleFactorOverride': None, 'mq.letterSpacingOverride': None, 'mq.wordSpacingOverride': None, 'mq.paragraphSpacingOverride': None, 'mq.displayCornerRadii': None, 'f.accessibleNavigation': False, 'f.invertColors': False, 'f.disableAnimations': False, 'f.boldText': False, 'f.reduceMotion': False, 'f.highContrast': False, 'f.onOffSwitchLabels': False, 'f.supportsAnnounce': False, 'f.autoPlayAnimatedImages': True, 'f.autoPlayVideos': True, 'f.deterministicCursor': False, 'semanticsEnabled': False, 'theme': 'light', 'once': 'AccessibilityFeatures[autoPlayAnimatedImages, autoPlayVideos]', 'started': 1795847693100}
+   11-28 01:34:55.186 {'mq.displayCornerRadii': 'BorderRadius.circular(50.3)'} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:34:59.018 baseline
+-- 11-28 01:35:01.049 dark_on
+   11-28 01:35:01.433 {'mq.platformBrightness': 'dark'} (featureChanges=0 semanticsChanges=0)
+   11-28 01:35:01.502 {'theme': 'dark'} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:35:05.186 dark_off
+   11-28 01:35:05.327 {'mq.platformBrightness': 'light'} (featureChanges=0 semanticsChanges=0)
+   11-28 01:35:05.410 {'theme': 'unknown'} (featureChanges=0 semanticsChanges=0)
+   11-28 01:35:05.519 {'theme': 'light'} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:35:09.293 font_scale_1.5_on
+   11-28 01:35:09.412 {'mq.textScale14': 22.0} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:35:13.361 font_scale_1.5_off
+   11-28 01:35:13.507 {'mq.textScale14': 14.0} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:35:17.448 font_scale_2.0_on
+   11-28 01:35:17.562 {'mq.textScale14': 26.0} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:35:21.538 font_scale_2.0_off
+   11-28 01:35:21.668 {'mq.textScale14': 14.0} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:35:25.623 animator_duration_scale_0_on
+-- 11-28 01:35:29.708 animator_duration_scale_0_off
+-- 11-28 01:35:33.805 transition_animation_scale_0_on
+   11-28 01:35:33.916 {'mq.disableAnimations': True, 'f.disableAnimations': True} (featureChanges=1 semanticsChanges=0)
+-- 11-28 01:35:37.885 transition_animation_scale_0_off
+   11-28 01:35:37.998 {'mq.disableAnimations': False, 'f.disableAnimations': False} (featureChanges=2 semanticsChanges=0)
+   11-28 01:35:42.015 {'mq.disableAnimations': True, 'f.disableAnimations': True} (featureChanges=3 semanticsChanges=0)
+   11-28 01:35:46.174 {'mq.disableAnimations': False, 'f.disableAnimations': False} (featureChanges=4 semanticsChanges=0)
+-- 11-28 01:35:50.273 invert_colours_on
+   11-28 01:35:50.371 {'mq.invertColors': True, 'f.invertColors': True} (featureChanges=5 semanticsChanges=0)
+-- 11-28 01:35:54.359 invert_colours_off
+   11-28 01:35:54.439 {'mq.invertColors': False, 'f.invertColors': False} (featureChanges=6 semanticsChanges=0)
+-- 11-28 01:35:58.439 high_contrast_text_on
+-- 11-28 01:36:02.501 high_contrast_text_off
+   11-28 01:36:06.604 {'mq.highContrast': True, 'f.highContrast': True} (featureChanges=7 semanticsChanges=0)
+   11-28 01:36:06.643 {'theme': 'unknown'} (featureChanges=7 semanticsChanges=0)
+   11-28 01:36:07.283 MAIN main started=1795847767279 ensure=true web=false
+   11-28 01:36:07.788 {'mq.displayCornerRadii': None, 'theme': 'hc-light', 'once': 'AccessibilityFeatures[highContrast, autoPlayAnimatedImages, autoPlayVideos]', 'started': 1795847767279} (featureChanges=0 semanticsChanges=0)
+   11-28 01:36:08.835 {'mq.displayCornerRadii': 'BorderRadius.circular(50.3)'} (featureChanges=0 semanticsChanges=0)
+   11-28 01:36:10.711 {'mq.highContrast': False, 'f.highContrast': False} (featureChanges=1 semanticsChanges=0)
+   11-28 01:36:11.222 MAIN main started=1795847771213 ensure=true web=false
+   11-28 01:36:11.737 {'mq.displayCornerRadii': None, 'theme': 'light', 'once': 'AccessibilityFeatures[autoPlayAnimatedImages, autoPlayVideos]', 'started': 1795847771213} (featureChanges=0 semanticsChanges=0)
+   11-28 01:36:12.693 {'mq.displayCornerRadii': 'BorderRadius.circular(50.3)'} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:36:22.851 time_24_hour_on
+-- 11-28 01:36:26.912 time_24_hour_off
+-- 11-28 01:36:30.971 colour_correction_on
+-- 11-28 01:36:35.033 colour_correction_off
+-- 11-28 01:36:39.121 uiautomator_dump,_no_accessibility_service
+   11-28 01:36:39.576 {'semanticsEnabled': True} (featureChanges=0 semanticsChanges=1)
+   11-28 01:36:40.859 {'mq.accessibleNavigation': True, 'f.accessibleNavigation': True} (featureChanges=1 semanticsChanges=1)
+   11-28 01:36:41.013 {'mq.accessibleNavigation': False, 'f.accessibleNavigation': False, 'semanticsEnabled': False} (featureChanges=2 semanticsChanges=2)
+-- 11-28 01:36:46.046 relaunch_after_dump
+   11-28 01:36:47.687 MAIN main started=1795847807664 ensure=true web=false
+   11-28 01:36:48.447 {'mq.displayCornerRadii': None, 'started': 1795847807664} (featureChanges=0 semanticsChanges=0)
+   11-28 01:36:49.462 {'mq.displayCornerRadii': 'BorderRadius.circular(50.3)'} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:36:56.682 bold_text_on
+   11-28 01:36:57.152 MAIN main started=1795847817147 ensure=true web=false
+   11-28 01:36:57.638 {'mq.boldText': True, 'mq.displayCornerRadii': None, 'f.boldText': True, 'once': 'AccessibilityFeatures[boldText, autoPlayAnimatedImages, autoPlayVideos]', 'started': 1795847817147} (featureChanges=0 semanticsChanges=0)
+   11-28 01:36:58.684 {'mq.displayCornerRadii': 'BorderRadius.circular(50.3)'} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:37:04.764 bold_text_off
+   11-28 01:37:05.250 MAIN main started=1795847825243 ensure=true web=false
+   11-28 01:37:05.767 {'mq.boldText': False, 'mq.displayCornerRadii': None, 'f.boldText': False, 'once': 'AccessibilityFeatures[autoPlayAnimatedImages, autoPlayVideos]', 'started': 1795847825243} (featureChanges=0 semanticsChanges=0)
+   11-28 01:37:06.817 {'mq.displayCornerRadii': 'BorderRadius.circular(50.3)'} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:37:12.861 relaunch_before_TalkBack
+   11-28 01:37:14.319 MAIN main started=1795847834307 ensure=true web=false
+   11-28 01:37:14.921 {'mq.displayCornerRadii': None, 'started': 1795847834307} (featureChanges=0 semanticsChanges=0)
+   11-28 01:37:15.990 {'mq.displayCornerRadii': 'BorderRadius.circular(50.3)'} (featureChanges=0 semanticsChanges=0)
+-- 11-28 01:37:21.356 talkback_on
+   11-28 01:37:21.488 {'semanticsEnabled': True} (featureChanges=0 semanticsChanges=1)
+   11-28 01:37:21.756 {'mq.accessibleNavigation': True, 'f.accessibleNavigation': True} (featureChanges=1 semanticsChanges=1)
+-- 11-28 01:37:31.459 talkback_off
+   11-28 01:37:31.496 {'mq.accessibleNavigation': False, 'f.accessibleNavigation': False, 'semanticsEnabled': False} (featureChanges=2 semanticsChanges=2)
+-- 11-28 01:37:41.549 talkback_on,_then_app_started
+   11-28 01:37:41.632 {'semanticsEnabled': True} (featureChanges=2 semanticsChanges=3)
+-- 11-28 01:37:47.734 app_started_with_talkback_on
+   11-28 01:37:48.259 MAIN main started=1795847868246 ensure=true web=false
+   11-28 01:37:48.481 {'mq.displayCornerRadii': None, 'started': 1795847868246} (featureChanges=0 semanticsChanges=0)
+   11-28 01:37:48.827 {'mq.displayCornerRadii': 'BorderRadius.circular(50.3)'} (featureChanges=0 semanticsChanges=0)
+   11-28 01:37:48.908 {'mq.accessibleNavigation': True, 'f.accessibleNavigation': True} (featureChanges=1 semanticsChanges=0)
+-- 11-28 01:38:02.905 talkback_off,_app_running
+   11-28 01:38:03.057 {'mq.accessibleNavigation': False, 'f.accessibleNavigation': False, 'semanticsEnabled': False} (featureChanges=2 semanticsChanges=1)
+-- 11-28 01:38:11.073 end

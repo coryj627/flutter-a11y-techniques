@@ -1,0 +1,12 @@
+V12STEP 01:38:34 Flutter appearance dark
+V12STEP 01:38:43 Flutter appearance light
+V12STEP 01:38:53 Flutter content_size accessibility-extra-extra-extra-large
+V12STEP 01:39:02 Flutter content_size large
+V12STEP 01:39:11 Flutter increase_contrast enabled
+V12STEP 01:39:20 Flutter increase_contrast disabled
+V12STEP 01:39:42 Native appearance dark
+V12STEP 01:39:51 Native appearance light
+V12STEP 01:40:00 Native content_size accessibility-extra-extra-extra-large
+V12STEP 01:40:10 Native content_size large
+V12STEP 01:40:19 Native increase_contrast enabled
+V12STEP 01:40:28 Native increase_contrast disabled

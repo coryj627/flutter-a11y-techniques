@@ -1,0 +1,54 @@
+VoiceOver before: 0
+TalkBack services before: null
+[V12] build android: ok, 9 s
+[V12] build ios: ok, 10 s
+[V12] android: ok, 94 s
+[V12] ios: ok, 571 s
+[V12] voiceover-ios: ok, 112 s
+
+Summary
+=======
+V12:
+  android        PASS     94 s
+  ios            PASS     571 s
+  voiceover-ios  PASS     112 s
+
+Result: PASS
+evidence exit 0
+VoiceOver after: 0
+TalkBack services after: null
+android-system: unchanged
+android-secure: unchanged
+android-global: unchanged
+android-night: unchanged
+android-wm: unchanged
+ios-a11y: unchanged
+ios-ui: unchanged
+
+iOS tests and VoiceOver state lines (build/evidence/V12/ios.log):
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testASwitchFoundOnIsPutBackOn]' passed (145.476 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testExpectedUtterancesAreShortEnough]' passed (0.074 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testIncreaseContrastReachesGoodMediaQueryAndNotBadReadOnce]' passed (107.869 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testListsSayWhatTheAppWasToldWhenItOpens]' passed (22.116 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testReduceMotionOnWhenTheExampleOpens]' passed (76.002 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testReduceMotionReachesGoodMotionAndNotBadAnimationsOnly]' passed (79.653 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testTheCollectorFailsADuplicateStopAndAnUnwitnessedEnd]' passed (0.074 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testTheJudgeRefusesALongExpectedUtterance]' passed (0.055 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testTheJudgeTiesAWalkToItsScreen]' passed (0.050 seconds).
+V12 VoiceOver was off before the test
+V12 VoiceOver was on before the test
+V12 VoiceOver put back on
+V12 VoiceOver put back off
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverFoundOnIsPutBackOn]' passed (27.584 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverStateACleanupThatDoesNotTakeIsReported]' passed (0.377 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverStateAFailedCleanupFailsAWalkThatPassed]' passed (0.049 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverStateAFailedWalkAndAFailedCleanupAreBothReported]' passed (0.045 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverStateAFailedWalkStillPutsItBackAndRethrows]' passed (0.045 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverStateAWalkFromOffTurnsItOnAndPutsItBackOff]' passed (0.043 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverStateAWalkFromOnLeavesItOn]' passed (0.046 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverStateOneThatWillNotTurnOnFailsTheWalkAndChangesNothing]' passed (0.045 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverStateTheOffBaselineFromOnAndFromOff]' passed (0.340 seconds).
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverStateTheRestoreReportsWhatItCouldNotDo]' passed (0.063 seconds).
+V12 VoiceOver was off before the test
+V12 VoiceOver put back off
+Test Case '-[RunnerUITests.V12AccessibilitySettingsUITests testVoiceOverTurnedOnReachesGoodMediaQueryAndNotBadReadOnce]' passed (33.986 seconds).

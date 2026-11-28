@@ -1,0 +1,40 @@
+"""Summarises a V12 probe log: for each step marker, the probe values that
+changed after it, relative to the values before it (throwaway; kept as
+docs/evidence/probes/v12/summarise.py.txt). The probe logs its values in
+parts of eight (`V12PROBE <time> part<n> [end] {...}`); a reading is
+complete at its `end` part.
+
+Usage: python3 summarise.py <log>
+"""
+import json
+import re
+import sys
+
+path = sys.argv[1]
+SKIP = {"featureChanges", "semanticsChanges", "mq.touchSlop"}
+prev = None
+reading = {}
+for line in open(path, errors="replace"):
+    stamp = line[:18].strip()
+    if "V12STEP" in line:
+        m = re.search(r"V12STEP\S*\s*(?:\(\s*\d+\))?:?\s*(.*)$", line)
+        print(f"-- {stamp} {(m.group(1) if m else line).strip()}")
+        continue
+    if "V12PROBE main" in line:
+        print(f"   {stamp} MAIN {line.split('V12PROBE', 1)[1].strip()}")
+        continue
+    m = re.search(r"V12PROBE (\S+) part(\d+)( end)? (\{.*\})", line)
+    if not m:
+        continue
+    reading.update(json.loads(m.group(4)))
+    if not m.group(3):
+        continue
+    data, reading = reading, {}
+    if prev is None:
+        print(f"   {stamp} first reading", {k: v for k, v in data.items() if k not in SKIP})
+    else:
+        diff = {k: v for k, v in data.items() if prev.get(k) != v and k not in SKIP}
+        extra = f" (featureChanges={data.get('featureChanges')} semanticsChanges={data.get('semanticsChanges')})"
+        if diff:
+            print(f"   {stamp} {diff}{extra}")
+    prev = data
