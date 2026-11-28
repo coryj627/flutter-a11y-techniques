@@ -516,7 +516,8 @@ yet), **Fixed in x.y** (verified on that version).
     `docs/evidence/probes/s08/voiceover-web-round7-fail.md.txt` to
     `voiceover-web-round10-fail.md.txt`) ended in Chromium at items 30, 22,
     30 and 20, and in WebKit at items 13, 13, 21 and 30, VoiceOver
-    scrolling the list as it moved. S08's row
+    scrolling the list as it moved; the fifth
+    (`docs/evidence/S08/voiceover-web.md`) ended at item 13 in both. S08's row
     therefore proves only that items 1 to 13 are read, with no list role,
     and that whatever is read beyond them is the next items in order.
   - What each platform says about the list itself is FL-312 (web) and
@@ -5169,7 +5170,7 @@ yet), **Fixed in x.y** (verified on that version).
   view: 13 of 30 when p08 opened, 18 to 30 after it was scrolled to the
   end. VoiceOver on the web, moving with `next()` through S08
   `bad-lazy-list`, read no list role; how far it went varied between
-  recordings in both browsers, Chromium 13, 30, 22, 30, 20 and WebKit 13, 21, 30,
+  recordings in both browsers, Chromium 13, 30, 22, 30, 20, 13 and WebKit 13, 21, 30, 13,
   the cause not found ([FL-011](#fl-011)).
 - WCAG: 1.3.1 Info and Relationships, on the web: a list shown as a list
   is not programmatically a list.

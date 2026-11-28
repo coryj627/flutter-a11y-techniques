@@ -102,7 +102,7 @@ VOICEOVER_WEB_METHOD = (
     "in the walk's row, and the web tree spec judges the transcript again from its rows by the "
     "same rule, from the positions row. "
     "At most 60 moves a walk. bad-lazy-list, where how far VoiceOver goes varied between "
-    "recordings in both browsers (Chromium 13, 30, 22, 30, 20; WebKit 13, 21, 30): \"Order 1\" to \"Order N\", "
+    "recordings in both browsers (Chromium 13, 30, 22, 30, 20, 13; WebKit 13, 21, 30, 13): \"Order 1\" to \"Order N\", "
     "consecutive, for N from 13 to 30, nothing after, its end witnessed, N in the verdict: that row "
     "proves only that the first thirteen orders are read with no list role and that whatever is read "
     "beyond them is consecutive orders. "
