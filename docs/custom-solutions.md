@@ -94,6 +94,7 @@ example is added without a decision.
 | [S08 List semantics](#s08-list-semantics) | 4 | 0 | 0 | 4 |
 | [S09 Content grouping](#s09-content-grouping) | 4 | 0 | 1 | 3 |
 | [S10 Content group replacement](#s10-content-group-replacement) | 3 | 0 | 0 | 3 |
+| [S12 Hiding content from AT](#s12-hiding-content-from-at) | 3 | 0 | 0 | 3 |
 | [S13 Roles and traits](#s13-roles-and-traits) | 5 | 4 | 0 | 1 |
 | [S14 Values and state descriptions](#s14-values-and-state-descriptions) | 4 | 2 | 1 | 1 |
 | [S15 Hints](#s15-hints) | 5 | 2 | 0 | 3 |
@@ -101,7 +102,7 @@ example is added without a decision.
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 141 | 51 | 13 | 77 |
+| All | 144 | 51 | 13 | 80 |
 
 ## C01 Button
 
@@ -449,6 +450,16 @@ Nothing flagged.
 | `good-exclude-semantics` | Nothing: `Semantics(label:, excludeSemantics: true)` round the rating's pieces, the documented property for replacing all child semantics with one node, its label worked out from the shown values; a `TextButton` with a focus outline through its own `style` | `Semantics.excludeSemantics` | A faint focus tint on a `TextButton` ([FL-430](flutter-limitations.md#fl-430)), filled with its `style` | R1, R2, R3: Android View Content Group Replacement, Android Compose Content Group Replacement, Flutter's Semantics.excludeSemantics documentation | not custom |
 | `good-hidden-pieces` | Nothing: `MergeSemantics` round `Semantics(label:)`, with each piece in `ExcludeSemantics` | `MergeSemantics`, `ExcludeSemantics` | none | R1, R2: Android Compose Content Group Replacement | not custom |
 | `good-stars` | Nothing: `Semantics(label:, excludeSemantics: true)` round star `Icon`s and two texts | `Semantics.excludeSemantics` | none | R1, R2: Android View Content Group Replacement, Android Compose Content Group Replacement | not custom |
+
+## S12 Hiding content from AT
+
+Nothing flagged.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-decoration` | Nothing: `ExcludeSemantics` round each ornament | `ExcludeSemantics` | none | R1, R2: iOS Accessibility Hidden, WAI-ARIA 1.2 aria-hidden | not custom |
+| `good-badge` | Nothing: `ExcludeSemantics` round a `Badge` whose count the text beside it says | `ExcludeSemantics`, `Badge` | none | R1, R2, R3: iOS Accessibility Hidden, WAI-ARIA 1.2 aria-hidden | not custom |
+| `good-visibility` | Nothing: `Visibility(visible:, maintainState: true)` round the panel, shown and hidden by a `SwitchListTile` | `Visibility` | none | R4, R5: HTML Standard hidden, Visibility documentation | not custom |
 
 ## S13 Roles and traits
 

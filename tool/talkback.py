@@ -526,7 +526,7 @@ def walk_until_heard(walk_once=None):
 # Techniques whose TalkBack walk is judged whole (walk_strictly), not row by
 # row across walks (walk_until_heard). Every other technique keeps
 # walk_until_heard.
-STRICT = {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10", "S16"}
+STRICT = {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10", "S12", "S16"}
 
 # A row of a strict technique that must be silent declares it with this as
 # its only required phrase: (["(must be silent)"], []). judge_walk then

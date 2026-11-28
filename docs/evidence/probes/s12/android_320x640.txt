@@ -1,0 +1,5 @@
+during the run: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+> Task :app:connectedDebugAndroidTest
+BUILD SUCCESSFUL in 2m 26s
+after reset: Physical size: 1080x2424  Physical density: 420 
+result (build/app/outputs/androidTest-results/connected/debug, read after the run): S12HidingContentTest tests=11 failures=0 errors=0 skipped=1 (talkBackWalk, which skips with TalkBack off)

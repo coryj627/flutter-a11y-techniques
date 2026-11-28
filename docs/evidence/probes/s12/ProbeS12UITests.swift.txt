@@ -1,0 +1,122 @@
+// S12 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s12/ProbeS12UITests.swift.txt): for each fixture of
+// lib/probe.dart, opened by URL: the XCUITest tree; for the fixtures with a
+// Share button, a tap on each button but Back and the After button, and a
+// tap where the Share button is laid out (between the "Before" text and the
+// After button); one to three Tabs then Return (and Space for some), from a
+// fresh launch each; and with VoiceOver on, a walk forward from the top of
+// the screen to the fixture's taps line.
+import XCTest
+
+final class ProbeS12UITests: XCTestCase {
+  let app = XCUIApplication()
+  let ids = (1...34).map { String(format: "p%02d", $0) }
+  let withShare = [
+    "p01", "p03", "p04", "p05", "p07", "p09", "p10", "p11", "p12", "p13", "p14", "p15", "p16",
+    "p17", "p18", "p19", "p20", "p22", "p23", "p24", "p29", "p31", "p32",
+  ]
+  let withSpace = ["p03", "p05", "p13", "p16", "p22", "p31"]
+
+  func log(_ s: String) { print("S12PROBE \(s)") }
+
+  func tapsElement(_ id: String) -> XCUIElement { app.descendants(matching: .any)["\(id)-taps"] }
+
+  func open(_ id: String) {
+    for _ in 1...3 {
+      app.terminate()
+      app.open(URL(string: "fluttera11y:///\(id)")!)
+      if tapsElement(id).waitForExistence(timeout: 30) { sleep(1); return }
+    }
+    XCTFail("\(id) did not open")
+  }
+
+  func taps(_ id: String) -> String {
+    sleep(2)
+    return tapsElement(id).exists ? tapsElement(id).label : "(gone)"
+  }
+
+  func dump(_ id: String) {
+    log("==== \(id)")
+    for e in app.descendants(matching: .any).allElementsBoundByIndex {
+      let t = e.elementType
+      if t == .window || t == .application { continue }
+      if t == .other && e.label.isEmpty && e.identifier.isEmpty { continue }
+      log("\(id) EL type=\(t.rawValue) id=\(e.identifier) label=\(e.label.debugDescription) value=\(String(describing: e.value)) enabled=\(e.isEnabled) hittable=\(e.isHittable) frame=\(e.frame)")
+    }
+  }
+
+  func labelled(_ s: String) -> XCUIElement {
+    app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", s)).firstMatch
+  }
+
+  func testTree() {
+    for id in ids {
+      open(id)
+      dump(id)
+      guard withShare.contains(id) else { continue }
+      let buttons = app.buttons.allElementsBoundByIndex.map { $0.label }
+        .filter { $0 != "Back" && !$0.isEmpty && $0 != "\(id) After" }
+      for label in buttons {
+        open(id)
+        let b = app.buttons[label]
+        if !b.exists { log("\(id) button \(label.debugDescription) not found again"); continue }
+        b.tap()
+        log("\(id) tap on button \(label.debugDescription): \(taps(id))")
+      }
+      open(id)
+      let before = labelled("Before \(id)")
+      let after = labelled("\(id) After")
+      if before.exists && after.exists {
+        let x = after.frame.minX + 40
+        let y = (before.frame.maxY + after.frame.minY) / 2
+        app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: x, dy: y)).tap()
+        log("\(id) tap at (\(x), \(y)), between Before \(before.frame) and After \(after.frame): \(taps(id))")
+      } else {
+        log("\(id) tap: Before or After not found")
+      }
+    }
+  }
+
+  func testKeys() {
+    for id in withShare {
+      let keys = withSpace.contains(id) ? ["\n", " "] : ["\n"]
+      for key in keys {
+        for tabs in 1...3 {
+          open(id)
+          for _ in 0..<tabs {
+            app.typeKey(XCUIKeyboardKey.tab.rawValue, modifierFlags: [])
+            usleep(900_000)
+          }
+          app.typeKey(key, modifierFlags: [])
+          log("\(id) \(tabs) Tab(s) then \(key == "\n" ? "Return" : "Space"): \(taps(id))")
+        }
+      }
+    }
+  }
+
+  func testVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    let vo = XCUIDevice.shared.voiceOverService
+    func norm(_ s: String) -> String { s.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ") }
+    func say() -> String {
+      do { return norm(try vo.moveForward().utterance) } catch { return "(error \((error as NSError).code))" }
+    }
+    for id in ids {
+      open(id)
+      try vo.enable()
+      sleep(2)
+      var walk: [String] = []
+      for _ in 0..<14 {
+        let s = say()
+        walk.append(s)
+        if s.hasPrefix("\(id) taps") { break }
+      }
+      log("VO \(id) walk: \(walk.joined(separator: " / "))")
+      try vo.disable()
+    }
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+}
