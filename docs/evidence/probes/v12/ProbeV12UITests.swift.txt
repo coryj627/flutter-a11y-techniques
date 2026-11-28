@@ -1,0 +1,346 @@
+// V12 probe on iOS (throwaway; kept as
+// docs/evidence/probes/v12/ProbeV12UITests.swift.txt). Reads what the probe
+// app (lib/probe.dart) shows, then turns each setting on and off again and
+// reads it after each change, with the app left running in between:
+// appearance through XCUIDevice, VoiceOver through XCUIVoiceOverService, and
+// the accessibility settings through the simulator's own Settings app. Every
+// switch is put back as it was; each test checks that at its end.
+import XCTest
+
+final class ProbeV12UITests: XCTestCase {
+  let app = XCUIApplication()
+  let settings = XCUIApplication(bundleIdentifier: "com.apple.Preferences")
+
+  static let keys = [
+    "mq.accessibleNavigation", "mq.boldText", "mq.highContrast", "mq.invertColors",
+    "mq.disableAnimations", "mq.onOffSwitchLabels", "mq.supportsAnnounce", "mq.textScale100",
+    "mq.platformBrightness", "mq.alwaysUse24HourFormat", "mq.navigationMode",
+    "mq.supportsShowingSystemContextMenu", "mq.lineHeightScaleFactorOverride",
+    "f.accessibleNavigation", "f.reduceMotion", "f.autoPlayAnimatedImages", "f.autoPlayVideos",
+    "f.deterministicCursor", "semanticsEnabled", "theme", "featureChanges", "once", "started",
+  ]
+
+  func read(_ step: String) {
+    usleep(2_000_000)
+    var out: [String] = []
+    for key in Self.keys {
+      let e = app.descendants(matching: .any)["v12-\(key)"]
+      if !e.waitForExistence(timeout: 5) {
+        // Lower lines may be below the view; scroll once and look again.
+        app.swipeUp()
+        _ = e.waitForExistence(timeout: 3)
+      }
+      out.append(e.exists ? e.label : "\(key)=<missing>")
+    }
+    print("V12IOS \(step) | \(out.joined(separator: " ; "))")
+    app.swipeDown()
+  }
+
+  override func setUp() {
+    continueAfterFailure = true
+  }
+
+  func launchProbe() {
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(app.descendants(matching: .any)["v12-theme"].waitForExistence(timeout: 30))
+  }
+
+  func testAppearance() {
+    launchProbe()
+    let original = XCUIDevice.shared.appearance
+    print("V12IOS appearance original \(original.rawValue)")
+    read("baseline")
+    XCUIDevice.shared.appearance = .dark
+    read("appearance dark")
+    XCUIDevice.shared.appearance = .light
+    read("appearance light")
+    XCUIDevice.shared.appearance = original
+  }
+
+  func testVoiceOver() throws {
+    #if compiler(>=6.4)
+    guard #available(iOS 27.0, *) else { throw XCTSkip("needs iOS 27") }
+    launchProbe()
+    read("before VoiceOver")
+    let vo = XCUIDevice.shared.voiceOverService
+    try vo.enable()
+    usleep(3_000_000)
+    read("VoiceOver on")
+    try vo.disable()
+    usleep(3_000_000)
+    read("VoiceOver off")
+    #else
+    throw XCTSkip("needs Xcode 27")
+    #endif
+  }
+
+  /// Opens Settings at the top and taps through `path`.
+  func openSettings(_ path: [String]) -> Bool {
+    settings.terminate()
+    settings.launch()
+    for item in path {
+      let cell = settings.descendants(matching: .any).matching(
+        NSPredicate(format: "label == %@ AND (elementType == %d OR elementType == %d)",
+                    item, XCUIElement.ElementType.cell.rawValue, XCUIElement.ElementType.button.rawValue)
+      ).firstMatch
+      var tries = 0
+      while !(cell.exists && cell.isHittable) && tries < 10 {
+        settings.swipeUp()
+        tries += 1
+      }
+      if !cell.exists {
+        let text = settings.staticTexts[item]
+        if text.exists { text.tap(); continue }
+        print("V12IOS settings: no \(item)\n\(settings.debugDescription.prefix(6000))")
+        return false
+      }
+      cell.tap()
+      usleep(800_000)
+    }
+    return true
+  }
+
+  func settingSwitch(_ name: String) -> XCUIElement {
+    let sw = settings.switches[name]
+    var tries = 0
+    while !(sw.exists && sw.isHittable) && tries < 10 {
+      settings.swipeUp()
+      tries += 1
+    }
+    return sw
+  }
+
+  func value(_ sw: XCUIElement) -> String { (sw.value as? String) ?? "?" }
+
+  /// Turns the switch `name` under `path` on, reads the probe, turns it
+  /// back, reads again.
+  func toggle(_ path: [String], _ name: String) {
+    guard openSettings(path) else { XCTFail("no path \(path)"); return }
+    let sw = settingSwitch(name)
+    guard sw.exists else {
+      print("V12IOS settings: no switch \(name)\n\(settings.debugDescription.prefix(8000))")
+      XCTFail("no switch \(name)")
+      return
+    }
+    let before = value(sw)
+    print("V12IOS switch \(name) before=\(before)")
+    sw.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+    usleep(1_500_000)
+    let changed = value(sw)
+    print("V12IOS switch \(name) after tap=\(changed)")
+    app.activate()
+    read("\(name) \(changed == "1" ? "on" : "now \(changed)")")
+    settings.activate()
+    let sw2 = settingSwitch(name)
+    sw2.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+    usleep(1_500_000)
+    let restored = value(sw2)
+    print("V12IOS switch \(name) restored=\(restored)")
+    XCTAssertEqual(restored, before, "\(name) not restored")
+    app.activate()
+    read("\(name) back to \(restored)")
+  }
+
+  func testDisplaySettings() {
+    launchProbe()
+    read("baseline")
+    let display = ["Accessibility", "Display & Text Size"]
+    for name in ["Bold Text", "Increase Contrast", "On/Off Labels", "Smart Invert", "Classic Invert",
+                 "Reduce Transparency", "Differentiate Without Color", "Button Shapes", "Color Filters",
+                 "Reduce White Point"] {
+      toggle(display, name)
+    }
+  }
+
+  /// Puts every switch the probe touches back to off, tapping until it
+  /// reads "0", and prints each one's value before and after.
+  func testRestore() {
+    let display = ["Accessibility", "Display & Text Size"]
+    let motion = ["Accessibility", "Motion"]
+    let all: [([String], String)] = [
+      (display, "Bold Text"), (display, "Increase Contrast"), (display, "On/Off Labels"),
+      (display, "Smart Invert"), (display, "Reduce Transparency"),
+      (display, "Differentiate Without Color"), (display, "Button Shapes"),
+      (display, "Reduce White Point"), (motion, "Reduce Motion"),
+      (motion, "Prefer Non-Blinking Cursor"), (motion, "Dim Flashing Lights"),
+    ]
+    for (path, name) in all {
+      guard openSettings(path) else { XCTFail("no path \(path)"); continue }
+      let sw = settingSwitch(name)
+      guard sw.exists else { print("V12IOS restore: no switch \(name)"); continue }
+      let before = value(sw)
+      var tries = 0
+      while value(settingSwitch(name)) != "0" && tries < 4 {
+        settingSwitch(name).coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        usleep(2_500_000)
+        tries += 1
+      }
+      let after = value(settingSwitch(name))
+      print("V12IOS restore \(name) before=\(before) after=\(after)")
+      XCTAssertEqual(after, "0", "\(name) still on")
+    }
+    // Auto-play switches are on by default.
+    for name in ["Auto-Play Animated Images", "Auto-Play Video Previews"] {
+      guard openSettings(motion) else { continue }
+      let sw = settingSwitch(name)
+      guard sw.exists else { print("V12IOS restore: no switch \(name)"); continue }
+      let before = value(sw)
+      var tries = 0
+      while value(settingSwitch(name)) != "1" && tries < 4 {
+        settingSwitch(name).coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        usleep(2_500_000)
+        tries += 1
+      }
+      print("V12IOS restore \(name) before=\(before) after=\(value(settingSwitch(name)))")
+    }
+    settings.terminate()
+  }
+
+  // --- Round 2: what reaches the app live, what at a fresh launch, and
+  // what reaches a native UIKit app (NativeSettings, installed by the
+  // round 2 script) for the same change.
+
+  let native = XCUIApplication(bundleIdentifier: "dev.fluttera11y.v12nativesettings")
+  static let quick = ["mq.boldText", "mq.onOffSwitchLabels", "mq.highContrast", "mq.invertColors",
+                      "mq.platformBrightness", "mq.textScale100", "f.autoPlayVideos",
+                      "f.deterministicCursor", "f.reduceMotion", "featureChanges", "started"]
+  static let nativeKeys = ["boldText", "legibilityWeight", "onOffSwitchLabels", "darkerSystemColors",
+                           "invertColors", "videoAutoplay", "nonBlinking", "style", "contentSize",
+                           "events"]
+
+  func readQuick(_ step: String) {
+    usleep(2_000_000)
+    let out = Self.quick.map { key -> String in
+      let e = app.descendants(matching: .any)["v12-\(key)"]
+      return e.waitForExistence(timeout: 5) ? e.label : "\(key)=<missing>"
+    }
+    print("V12IOS2 \(stamp()) flutter \(step) | \(out.joined(separator: " ; "))")
+  }
+
+  func readNative(_ step: String) {
+    usleep(2_000_000)
+    let out = Self.nativeKeys.map { key -> String in
+      let e = native.descendants(matching: .any)["n-\(key)"]
+      return e.waitForExistence(timeout: 5) ? e.label : "\(key)=<missing>"
+    }
+    print("V12IOS2 \(stamp()) native \(step) | \(out.joined(separator: " ; "))")
+  }
+
+  func stamp() -> String {
+    let f = DateFormatter()
+    f.dateFormat = "HH:mm:ss.SSS"
+    return f.string(from: Date())
+  }
+
+  /// Sets the switch `name` under `path` to `on`, tapping until it reads
+  /// so, at most four taps; returns whether it does.
+  @discardableResult
+  func setSwitch(_ path: [String], _ name: String, _ on: Bool) -> Bool {
+    let want = on ? "1" : "0"
+    guard openSettings(path) else { return false }
+    var tries = 0
+    while value(settingSwitch(name)) != want && tries < 4 {
+      settingSwitch(name).coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+      usleep(2_500_000)
+      tries += 1
+    }
+    let now = value(settingSwitch(name))
+    print("V12IOS2 \(stamp()) switch \(name) now=\(now) after \(tries) taps")
+    return now == want
+  }
+
+  func round2(_ path: [String], _ name: String, from original: Bool) {
+    app.terminate(); app.launch()
+    XCTAssertTrue(app.descendants(matching: .any)["v12-theme"].waitForExistence(timeout: 30))
+    native.terminate(); native.launch()
+    readQuick("\(name) before")
+    readNative("\(name) before")
+    guard setSwitch(path, name, !original) else { XCTFail("\(name) did not change"); return }
+    app.activate(); readQuick("\(name) changed, live")
+    native.activate(); readNative("\(name) changed, live")
+    app.terminate(); app.launch()
+    XCTAssertTrue(app.descendants(matching: .any)["v12-theme"].waitForExistence(timeout: 30))
+    readQuick("\(name) changed, relaunched")
+    native.terminate(); native.launch(); readNative("\(name) changed, relaunched")
+    let back = setSwitch(path, name, original)
+    XCTAssertTrue(back, "\(name) not put back")
+    app.activate(); readQuick("\(name) back, live")
+    native.activate(); readNative("\(name) back, live")
+  }
+
+  func testRound2Settings() {
+    let display = ["Accessibility", "Display & Text Size"]
+    let motion = ["Accessibility", "Motion"]
+    round2(display, "Increase Contrast", from: false)
+    round2(display, "Bold Text", from: false)
+    round2(display, "On/Off Labels", from: false)
+    round2(motion, "Auto-Play Video Previews", from: true)
+    round2(motion, "Prefer Non-Blinking Cursor", from: false)
+    settings.terminate()
+  }
+
+  func testRound2Appearance() {
+    let original = XCUIDevice.shared.appearance
+    app.terminate(); app.launch()
+    XCTAssertTrue(app.descendants(matching: .any)["v12-theme"].waitForExistence(timeout: 30))
+    native.terminate(); native.launch()
+    app.activate(); readQuick("appearance before")
+    native.activate(); readNative("appearance before")
+    XCUIDevice.shared.appearance = .dark
+    usleep(3_000_000)
+    native.activate(); readNative("XCUIDevice dark, live")
+    app.activate(); readQuick("XCUIDevice dark, live")
+    usleep(8_000_000)
+    readQuick("XCUIDevice dark, live, 10 s later")
+    app.terminate(); app.launch()
+    XCTAssertTrue(app.descendants(matching: .any)["v12-theme"].waitForExistence(timeout: 30))
+    readQuick("XCUIDevice dark, relaunched")
+    XCUIDevice.shared.appearance = original
+    usleep(3_000_000)
+    readQuick("XCUIDevice back, live")
+    native.activate(); readNative("XCUIDevice back, live")
+  }
+
+  /// Reads the Flutter probe, or the native app, every second or so for
+  /// `seconds`, while the round 2 script changes `simctl ui` settings.
+  func watch(_ which: String, seconds: Double) {
+    let target = which == "flutter" ? app : native
+    target.terminate(); target.launch()
+    let end = Date().addingTimeInterval(seconds)
+    print("V12IOS2 \(stamp()) watch \(which) start")
+    while Date() < end {
+      if which == "flutter" {
+        // Round 3: an element pushed out of view by a larger text size is
+        // read as missing, not a failure.
+        let out = ["mq.platformBrightness", "mq.textScale100", "mq.highContrast", "theme", "featureChanges"]
+          .map { key -> String in
+            let e = app.descendants(matching: .any)["v12-\(key)"]
+            return e.exists ? e.label : "\(key)=<missing>"
+          }
+        print("V12IOS2 \(stamp()) watch flutter | \(out.joined(separator: " ; "))")
+      } else {
+        let out = ["style", "contentSize", "darkerSystemColors", "events"]
+          .map { key -> String in
+            let e = native.descendants(matching: .any)["n-\(key)"]
+            return e.exists ? e.label : "\(key)=<missing>"
+          }
+        print("V12IOS2 \(stamp()) watch native | \(out.joined(separator: " ; "))")
+      }
+      usleep(700_000)
+    }
+  }
+
+  func testRound2WatchFlutter() { watch("flutter", seconds: 75) }
+  func testRound2WatchNative() { watch("native", seconds: 75) }
+
+  func testMotionSettings() {
+    launchProbe()
+    read("baseline")
+    let motion = ["Accessibility", "Motion"]
+    for name in ["Reduce Motion", "Auto-Play Animated Images", "Auto-Play Video Previews",
+                 "Prefer Non-Blinking Cursor", "Dim Flashing Lights", "Prefer Cross-Fade Transitions"] {
+      toggle(motion, name)
+    }
+  }
+}

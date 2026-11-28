@@ -1,0 +1,123 @@
+// V12 native iOS comparison (throwaway; kept as
+// docs/evidence/probes/v12/NativeSettings.swift.txt). A UIKit app, built
+// with swiftc by build_native_ios.sh.txt and installed on the simulator,
+// never part of the Runner. One screen of labels, each identified
+// `n-<name>`, saying what UIKit reports for each setting the Flutter probe
+// reads, read again on every UIAccessibility notification the Flutter
+// engine observes (AccessibilityFeatures.swift), on every trait change,
+// and whenever the app becomes active; `n-events` counts the
+// notifications heard, by name.
+import UIKit
+
+final class Screen: UIViewController {
+  var labels: [String: UILabel] = [:]
+  var events: [String: Int] = [:]
+  let stack = UIStackView()
+
+  static let notifications: [(String, Notification.Name)] = [
+    ("voiceOver", UIAccessibility.voiceOverStatusDidChangeNotification),
+    ("invert", UIAccessibility.invertColorsStatusDidChangeNotification),
+    ("reduceMotion", UIAccessibility.reduceMotionStatusDidChangeNotification),
+    ("bold", UIAccessibility.boldTextStatusDidChangeNotification),
+    ("darker", UIAccessibility.darkerSystemColorsStatusDidChangeNotification),
+    ("onOff", UIAccessibility.onOffSwitchLabelsDidChangeNotification),
+    ("video", UIAccessibility.videoAutoplayStatusDidChangeNotification),
+    ("contentSize", UIContentSizeCategory.didChangeNotification),
+  ]
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .systemBackground
+    stack.axis = .vertical
+    stack.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(stack)
+    NSLayoutConstraint.activate([
+      stack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+      stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+      stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+    ])
+    for (name, note) in Self.notifications {
+      NotificationCenter.default.addObserver(forName: note, object: nil, queue: .main) { [weak self] _ in
+        self?.events[name, default: 0] += 1
+        self?.refresh()
+      }
+    }
+    if #available(iOS 18.0, *) {
+      for (name, note) in [
+        ("animatedImages", AccessibilitySettings.animatedImagesEnabledDidChangeNotification),
+        ("nonBlinking", AccessibilitySettings.prefersNonBlinkingTextInsertionIndicatorDidChangeNotification),
+      ] {
+        NotificationCenter.default.addObserver(forName: note, object: nil, queue: .main) { [weak self] _ in
+          self?.events[name, default: 0] += 1
+          self?.refresh()
+        }
+      }
+    }
+    NotificationCenter.default.addObserver(
+      forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main
+    ) { [weak self] _ in self?.refresh() }
+    registerForTraitChanges([UITraitUserInterfaceStyle.self, UITraitLegibilityWeight.self,
+                             UITraitPreferredContentSizeCategory.self,
+                             UITraitAccessibilityContrast.self]) { (self: Screen, _) in self.refresh() }
+    refresh()
+  }
+
+  func set(_ name: String, _ value: String) {
+    let l = labels[name] ?? {
+      let l = UILabel()
+      l.font = .systemFont(ofSize: 12)
+      l.accessibilityIdentifier = "n-\(name)"
+      stack.addArrangedSubview(l)
+      labels[name] = l
+      return l
+    }()
+    l.text = "\(name)=\(value)"
+    l.accessibilityLabel = "\(name)=\(value)"
+  }
+
+  func refresh() {
+    set("boldText", "\(UIAccessibility.isBoldTextEnabled)")
+    set("legibilityWeight", traitCollection.legibilityWeight == .bold ? "bold" : "regular")
+    set("onOffSwitchLabels", "\(UIAccessibility.isOnOffSwitchLabelsEnabled)")
+    set("darkerSystemColors", "\(UIAccessibility.isDarkerSystemColorsEnabled)")
+    set("invertColors", "\(UIAccessibility.isInvertColorsEnabled)")
+    set("reduceMotion", "\(UIAccessibility.isReduceMotionEnabled)")
+    set("videoAutoplay", "\(UIAccessibility.isVideoAutoplayEnabled)")
+    if #available(iOS 18.0, *) {
+      set("animatedImages", "\(AccessibilitySettings.animatedImagesEnabled)")
+      set("nonBlinking", "\(AccessibilitySettings.prefersNonBlinkingTextInsertionIndicator)")
+    }
+    set("voiceOver", "\(UIAccessibility.isVoiceOverRunning)")
+    set("style", traitCollection.userInterfaceStyle == .dark ? "dark" : "light")
+    set("contentSize", traitCollection.preferredContentSizeCategory.rawValue)
+    set("events", events.sorted { $0.key < $1.key }.map { "\($0.key):\($0.value)" }.joined(separator: ","))
+  }
+}
+
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+  var window: UIWindow?
+
+  func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
+             options connectionOptions: UIScene.ConnectionOptions) {
+    guard let windowScene = scene as? UIWindowScene else { return }
+    window = UIWindow(windowScene: windowScene)
+    window!.rootViewController = Screen()
+    window!.makeKeyAndVisible()
+  }
+}
+
+// iOS 27 stops an app that has not adopted the scene life cycle (the first
+// build of this probe app, which set its window in the app delegate, was
+// stopped at launch: UIApplicationEvaluateRuntimeIssueForNoSceneLifecycleAdoption).
+@main
+final class AppDelegate: UIResponder, UIApplicationDelegate {
+  func application(
+    _ application: UIApplication,
+    configurationForConnecting connectingSceneSession: UISceneSession,
+    options: UIScene.ConnectionOptions
+  ) -> UISceneConfiguration {
+    let config = UISceneConfiguration(name: "Default", sessionRole: connectingSceneSession.role)
+    config.delegateClass = SceneDelegate.self
+    return config
+  }
+}

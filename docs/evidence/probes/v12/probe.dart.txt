@@ -1,0 +1,171 @@
+// V12 probe (throwaway; kept as docs/evidence/probes/v12/probe.dart.txt).
+// One screen that shows, and logs on every change, what the framework tells
+// the app about the user's settings: every accessibility-related field of
+// MediaQueryData read through its own `...Of` method, every flag of
+// PlatformDispatcher.accessibilityFeatures (refreshed by
+// WidgetsBindingObserver), SemanticsBinding.semanticsEnabled (refreshed by
+// its listener), a copy of the features read once at start, which theme
+// MaterialApp chose, and the time main() ran (a new time means the app was
+// started again).
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+final _started = DateTime.now().millisecondsSinceEpoch;
+const _ensure = bool.fromEnvironment('V12_ENSURE', defaultValue: true);
+
+void main() {
+  debugPrint('V12PROBE main started=$_started ensure=$_ensure web=$kIsWeb');
+  runApp(const ProbeApp());
+  if (kIsWeb && _ensure) {
+    SemanticsBinding.instance.ensureSemantics();
+  }
+}
+
+ThemeData _theme(Color seed, Brightness b) =>
+    ThemeData(colorSchemeSeed: seed, brightness: b);
+
+class ProbeApp extends StatelessWidget {
+  const ProbeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'V12 probe',
+      // Each theme a seed of its own, so the screen can say which MaterialApp
+      // chose: light, dark, high contrast light, high contrast dark.
+      theme: _theme(Colors.indigo, Brightness.light),
+      darkTheme: _theme(Colors.teal, Brightness.dark),
+      highContrastTheme: _theme(Colors.red, Brightness.light),
+      highContrastDarkTheme: _theme(Colors.orange, Brightness.dark),
+      home: const ProbeScreen(),
+    );
+  }
+}
+
+class ProbeScreen extends StatefulWidget {
+  const ProbeScreen({super.key});
+
+  @override
+  State<ProbeScreen> createState() => _ProbeScreenState();
+}
+
+class _ProbeScreenState extends State<ProbeScreen> with WidgetsBindingObserver {
+  late final String _once;
+  var _featureChanges = 0;
+  var _semanticsChanges = 0;
+  String? _last;
+
+  @override
+  void initState() {
+    super.initState();
+    _once = WidgetsBinding.instance.platformDispatcher.accessibilityFeatures
+        .toString();
+    WidgetsBinding.instance.addObserver(this);
+    SemanticsBinding.instance.addSemanticsEnabledListener(_onSemantics);
+  }
+
+  void _onSemantics() => setState(() => _semanticsChanges++);
+
+  @override
+  void didChangeAccessibilityFeatures() => setState(() => _featureChanges++);
+
+  @override
+  void dispose() {
+    SemanticsBinding.instance.removeSemanticsEnabledListener(_onSemantics);
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  String _themeName(ThemeData t) {
+    final p = t.colorScheme.primary;
+    String near(Color seed, Brightness b) =>
+        ColorScheme.fromSeed(seedColor: seed, brightness: b).primary == p
+        ? 'yes'
+        : 'no';
+    if (near(Colors.indigo, Brightness.light) == 'yes') return 'light';
+    if (near(Colors.teal, Brightness.dark) == 'yes') return 'dark';
+    if (near(Colors.red, Brightness.light) == 'yes') return 'hc-light';
+    if (near(Colors.orange, Brightness.dark) == 'yes') return 'hc-dark';
+    return 'unknown';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final f = View.of(context).platformDispatcher.accessibilityFeatures;
+    final values = <String, Object?>{
+      'mq.accessibleNavigation': MediaQuery.accessibleNavigationOf(context),
+      'mq.boldText': MediaQuery.boldTextOf(context),
+      'mq.highContrast': MediaQuery.highContrastOf(context),
+      'mq.invertColors': MediaQuery.invertColorsOf(context),
+      'mq.disableAnimations': MediaQuery.disableAnimationsOf(context),
+      'mq.onOffSwitchLabels': MediaQuery.onOffSwitchLabelsOf(context),
+      'mq.supportsAnnounce': MediaQuery.supportsAnnounceOf(context),
+      'mq.textScale100': MediaQuery.textScalerOf(context).scale(100),
+      'mq.textScale14': MediaQuery.textScalerOf(context).scale(14),
+      'mq.platformBrightness': MediaQuery.platformBrightnessOf(context).name,
+      'mq.alwaysUse24HourFormat': MediaQuery.alwaysUse24HourFormatOf(context),
+      'mq.navigationMode': MediaQuery.navigationModeOf(context).name,
+      'mq.supportsShowingSystemContextMenu':
+          MediaQuery.supportsShowingSystemContextMenu(context),
+      'mq.lineHeightScaleFactorOverride':
+          MediaQuery.maybeLineHeightScaleFactorOverrideOf(context),
+      'mq.letterSpacingOverride': MediaQuery.maybeLetterSpacingOverrideOf(
+        context,
+      ),
+      'mq.wordSpacingOverride': MediaQuery.maybeWordSpacingOverrideOf(context),
+      'mq.paragraphSpacingOverride': MediaQuery.maybeParagraphSpacingOverrideOf(
+        context,
+      ),
+      'mq.touchSlop': MediaQuery.gestureSettingsOf(context).touchSlop,
+      'mq.displayCornerRadii': MediaQuery.displayCornerRadiiOf(context)
+          ?.toString(),
+      'f.accessibleNavigation': f.accessibleNavigation,
+      'f.invertColors': f.invertColors,
+      'f.disableAnimations': f.disableAnimations,
+      'f.boldText': f.boldText,
+      'f.reduceMotion': f.reduceMotion,
+      'f.highContrast': f.highContrast,
+      'f.onOffSwitchLabels': f.onOffSwitchLabels,
+      'f.supportsAnnounce': f.supportsAnnounce,
+      'f.autoPlayAnimatedImages': f.autoPlayAnimatedImages,
+      'f.autoPlayVideos': f.autoPlayVideos,
+      'f.deterministicCursor': f.deterministicCursor,
+      'semanticsEnabled': SemanticsBinding.instance.semanticsEnabled,
+      'theme': _themeName(Theme.of(context)),
+      'featureChanges': _featureChanges,
+      'semanticsChanges': _semanticsChanges,
+      'once': _once,
+      'started': _started,
+    };
+    final line = jsonEncode(values);
+    if (line != _last) {
+      _last = line;
+      // Android's log cuts a line at about 1000 characters, so the values
+      // are logged in parts of eight, each with the time of the reading.
+      final now = DateTime.now().toIso8601String();
+      final entries = values.entries.toList();
+      for (var i = 0; i < entries.length; i += 8) {
+        final part = Map.fromEntries(entries.skip(i).take(8));
+        final last = i + 8 >= entries.length ? ' end' : '';
+        debugPrint('V12PROBE $now part${i ~/ 8}$last ${jsonEncode(part)}');
+      }
+    }
+    return Scaffold(
+      appBar: AppBar(title: const Text('V12 probe')),
+      body: ListView(
+        padding: const EdgeInsets.all(8),
+        children: [
+          for (final MapEntry(:key, :value) in values.entries)
+            Semantics(
+              identifier: 'v12-$key',
+              container: true,
+              child: Text('$key=$value', style: const TextStyle(fontSize: 12)),
+            ),
+        ],
+      ),
+    );
+  }
+}

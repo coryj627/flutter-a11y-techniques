@@ -1,0 +1,92 @@
+// V12 probe on the web (throwaway; kept as
+// docs/evidence/probes/v12/probe_v12.spec.js.txt). Loads the probe build and,
+// for each browser setting Playwright can emulate (and for the page's own
+// root font size and text spacing, standing in for the browser's), turns it
+// on, reads what the probe shows, turns it off, and reads again. Prints a
+// V12WEB line per reading and every V12PROBE line the app logs.
+import { test } from '@playwright/test';
+
+async function values(page) {
+  return page.evaluate(() => {
+    const out = {};
+    for (const e of document.querySelectorAll('[flt-semantics-identifier^="v12-"]')) {
+      const text = (e.getAttribute('aria-label') || e.textContent || '').trim();
+      const i = text.indexOf('=');
+      if (i > 0) out[text.slice(0, i)] = text.slice(i + 1);
+    }
+    return out;
+  });
+}
+
+const keys = [
+  'mq.accessibleNavigation', 'mq.boldText', 'mq.highContrast', 'mq.invertColors',
+  'mq.disableAnimations', 'mq.onOffSwitchLabels', 'mq.supportsAnnounce', 'mq.textScale100',
+  'mq.platformBrightness', 'mq.alwaysUse24HourFormat', 'mq.navigationMode',
+  'mq.supportsShowingSystemContextMenu', 'mq.lineHeightScaleFactorOverride',
+  'mq.letterSpacingOverride', 'mq.wordSpacingOverride', 'mq.paragraphSpacingOverride',
+  'f.reduceMotion', 'f.autoPlayAnimatedImages', 'f.autoPlayVideos', 'f.deterministicCursor',
+  'semanticsEnabled', 'theme', 'featureChanges', 'once',
+];
+
+async function report(page, browser, step) {
+  await page.waitForTimeout(1500);
+  const v = await values(page);
+  const picked = Object.fromEntries(keys.map((k) => [k, v[k]]));
+  console.log(`V12WEB ${browser} ${step} ${JSON.stringify(picked)}`);
+}
+
+test('settings', async ({ page, browserName }) => {
+  page.on('console', (m) => {
+    if (m.text().includes('V12PROBE')) console.log(`V12LOG ${browserName} ${m.text()}`);
+  });
+  await page.goto('/');
+  await page.locator('[flt-semantics-identifier="v12-theme"]').waitFor({ timeout: 30_000 });
+  await report(page, browserName, 'baseline');
+  const media = [
+    ['colorScheme dark', { colorScheme: 'dark' }, { colorScheme: 'light' }],
+    ['reducedMotion reduce', { reducedMotion: 'reduce' }, { reducedMotion: 'no-preference' }],
+    ['forcedColors active', { forcedColors: 'active' }, { forcedColors: 'none' }],
+    ['contrast more', { contrast: 'more' }, { contrast: 'no-preference' }],
+  ];
+  for (const [name, on, off] of media) {
+    await page.emulateMedia(on);
+    await report(page, browserName, `${name} on`);
+    await page.emulateMedia(off);
+    await report(page, browserName, `${name} off`);
+  }
+  await page.evaluate(() => { document.documentElement.style.fontSize = '32px'; });
+  await report(page, browserName, 'root font-size 32px on');
+  await page.evaluate(() => { document.documentElement.style.fontSize = ''; });
+  await report(page, browserName, 'root font-size 32px off');
+  // WCAG 1.4.12's text spacing, as a user style sheet or bookmarklet would set it.
+  await page.evaluate(() => {
+    const s = document.createElement('style');
+    s.id = 'v12-spacing';
+    s.textContent = '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; '
+      + 'word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }';
+    document.head.append(s);
+  });
+  await report(page, browserName, 'text spacing on');
+  await page.evaluate(() => document.getElementById('v12-spacing').remove());
+  await report(page, browserName, 'text spacing off');
+});
+
+test('semantics not ensured', async ({ page, browserName }) => {
+  test.skip(process.env.V12_BUILD !== 'build/web_probe_noensure', 'only for the build without ensureSemantics');
+  const logs = [];
+  page.on('console', (m) => {
+    if (m.text().includes('V12PROBE')) {
+      logs.push(m.text());
+      console.log(`V12LOG ${browserName} ${m.text()}`);
+    }
+  });
+  await page.goto('/');
+  await page.waitForTimeout(4000);
+  console.log(`V12WEB ${browserName} before-enable identifiers=${await page.locator('[flt-semantics-identifier^="v12-"]').count()}`);
+  // Flutter's "Enable accessibility" placeholder, which a screen reader user activates.
+  const placeholder = page.locator('flt-semantics-placeholder');
+  console.log(`V12WEB ${browserName} placeholder=${await placeholder.count()} label=${await placeholder.getAttribute('aria-label')}`);
+  await placeholder.evaluate((e) => e.click());
+  await page.locator('[flt-semantics-identifier="v12-theme"]').waitFor({ timeout: 15_000 });
+  await report(page, browserName, 'after placeholder click');
+});

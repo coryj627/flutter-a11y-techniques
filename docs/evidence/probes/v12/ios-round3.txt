@@ -1,0 +1,282 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+== simctl ui before: light large disabled
+V12IOS2 02:50:27.404 watch native start
+V12IOS2 02:50:27.464 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:28.236 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:28.987 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:29.741 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:30.510 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:31.268 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:32.023 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:32.789 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:33.532 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:34.288 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:35.042 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:35.801 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:36.564 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:37.318 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:38.067 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:38.824 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:39.583 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:40.348 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:41.095 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:41.859 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:42.627 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:43.374 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:44.139 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:44.910 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:45.659 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:46.412 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:47.188 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:47.944 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:48.709 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:49.469 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:50.228 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:50.991 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:51.748 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=
+V12IOS2 02:50:52.507 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:50:53.278 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:50:54.031 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:50:54.783 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:50:55.545 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:50:56.294 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:50:57.048 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:50:57.819 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:50:58.568 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:50:59.329 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:51:00.117 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:51:00.884 watch native | style=light ; contentSize=UICTContentSizeCategoryAccessibilityXXXL ; darkerSystemColors=false ; events=contentSize:1
+V12IOS2 02:51:01.646 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:02.401 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:03.181 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:03.936 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:04.688 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:05.439 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:06.203 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:06.947 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:07.717 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:08.477 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:09.250 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:10.014 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2
+V12IOS2 02:51:10.769 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:11.537 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:12.293 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:13.050 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:13.803 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:14.564 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:15.319 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:16.075 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:16.834 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:17.582 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:18.358 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:19.133 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=true ; events=contentSize:2,darker:1
+V12IOS2 02:51:19.897 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:20.687 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:21.444 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:22.196 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:22.949 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:23.694 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:24.463 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:25.217 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:25.965 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:26.736 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:27.510 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:28.263 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:29.017 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:29.777 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:30.550 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:31.319 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:32.076 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:32.850 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:33.629 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:34.375 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:35.141 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:35.898 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:36.647 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:37.414 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:38.184 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:38.934 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:39.706 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:40.474 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:41.225 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+V12IOS2 02:51:41.987 watch native | style=light ; contentSize=UICTContentSizeCategoryL ; darkerSystemColors=false ; events=contentSize:2,darker:2
+Test Case '-[RunnerUITests.ProbeV12UITests testRound2WatchNative]' passed (78.481 seconds).
+V12IOS2 02:51:51.312 watch flutter start
+V12IOS2 02:51:51.527 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:51:52.426 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:51:53.329 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:51:54.244 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:51:55.155 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:51:56.061 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:51:56.956 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:51:57.857 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:51:58.778 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:51:59.683 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:00.587 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:01.523 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:02.442 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:03.356 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:04.252 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:05.181 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:06.072 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:06.977 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:07.896 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:08.787 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:09.698 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:10.617 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:11.530 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:12.422 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:13.341 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:14.247 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:15.148 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:15.960 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:16.767 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:17.567 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:18.357 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:19.170 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:19.964 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:20.754 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:21.570 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:22.374 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:23.174 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:23.987 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:24.808 watch flutter | mq.platformBrightness=light ; mq.textScale100=311.7647058823529 ; mq.highContrast=false ; theme=<missing> ; featureChanges=<missing>
+V12IOS2 02:52:25.716 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:26.607 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:27.542 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:28.463 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:29.386 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:30.294 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:31.210 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:32.124 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:33.043 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:33.943 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 02:52:35.039 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=true ; theme=hc-light ; featureChanges=1
+V12IOS2 02:52:35.962 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=true ; theme=hc-light ; featureChanges=1
+V12IOS2 02:52:36.871 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=true ; theme=hc-light ; featureChanges=1
+V12IOS2 02:52:37.811 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=true ; theme=hc-light ; featureChanges=1
+V12IOS2 02:52:38.739 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=true ; theme=hc-light ; featureChanges=1
+V12IOS2 02:52:39.667 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=true ; theme=hc-light ; featureChanges=1
+V12IOS2 02:52:40.558 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=true ; theme=hc-light ; featureChanges=1
+V12IOS2 02:52:41.463 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=true ; theme=hc-light ; featureChanges=1
+V12IOS2 02:52:42.386 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=true ; theme=hc-light ; featureChanges=1
+V12IOS2 02:52:43.393 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=unknown ; featureChanges=2
+V12IOS2 02:52:44.381 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:45.337 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:46.268 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:47.164 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:48.057 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:48.967 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:49.899 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:50.802 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:51.712 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:52.624 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:53.542 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:54.465 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:55.382 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:56.274 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:57.185 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:58.112 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:59.027 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:52:59.930 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:53:00.823 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:53:01.757 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:53:02.685 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:53:03.590 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:53:04.482 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:53:05.421 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+V12IOS2 02:53:06.348 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=2
+Test Case '-[RunnerUITests.ProbeV12UITests testRound2WatchFlutter]' passed (80.253 seconds).
+== simctl ui after watch: light large disabled
+== testRound2Appearance
+V12IOS2 02:53:35.175 flutter appearance before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852394592
+V12IOS2 02:53:48.032 native appearance before | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 02:54:05.821 native XCUIDevice dark, live | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 02:54:20.051 flutter XCUIDevice dark, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852394592
+V12IOS2 02:54:42.250 flutter XCUIDevice dark, live, 10 s later | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852394592
+V12IOS2 02:55:01.874 flutter XCUIDevice dark, relaunched | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852485298
+V12IOS2 02:55:21.042 flutter XCUIDevice back, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852485298
+V12IOS2 02:55:33.906 native XCUIDevice back, live | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+Test Case '-[RunnerUITests.ProbeV12UITests testRound2Appearance]' passed (142.420 seconds).
+== testRound2Settings
+V12IOS2 02:56:01.738 flutter Increase Contrast before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852541146
+V12IOS2 02:56:14.527 native Increase Contrast before | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 02:56:26.827 switch Increase Contrast now=1 after 1 taps
+V12IOS2 02:56:41.089 flutter Increase Contrast changed, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=true ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=1 ; started=1795852541146
+V12IOS2 02:56:53.818 native Increase Contrast changed, live | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=true ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=darker:1
+V12IOS2 02:57:13.388 flutter Increase Contrast changed, relaunched | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=true ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852616827
+V12IOS2 02:57:29.951 native Increase Contrast changed, relaunched | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=true ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 02:57:43.307 switch Increase Contrast now=0 after 1 taps
+V12IOS2 02:57:57.502 flutter Increase Contrast back, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=1 ; started=1795852616827
+V12IOS2 02:58:10.271 native Increase Contrast back, live | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=darker:1
+V12IOS2 02:58:33.836 flutter Bold Text before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852693341
+V12IOS2 02:58:46.569 native Bold Text before | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 02:58:59.913 switch Bold Text now=1 after 1 taps
+V12IOS2 02:59:14.235 flutter Bold Text changed, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852693341
+V12IOS2 02:59:27.000 native Bold Text changed, live | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 02:59:46.619 flutter Bold Text changed, relaunched | mq.boldText=true ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852770037
+V12IOS2 03:00:03.155 native Bold Text changed, relaunched | boldText=true ; legibilityWeight=bold ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:00:16.786 switch Bold Text now=0 after 1 taps
+V12IOS2 03:00:31.007 flutter Bold Text back, live | mq.boldText=true ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852770037
+V12IOS2 03:00:43.825 native Bold Text back, live | boldText=true ; legibilityWeight=bold ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:01:07.573 flutter On/Off Labels before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852846856
+V12IOS2 03:01:20.353 native On/Off Labels before | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:01:35.546 switch On/Off Labels now=1 after 1 taps
+V12IOS2 03:01:49.901 flutter On/Off Labels changed, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852846856
+V12IOS2 03:02:02.747 native On/Off Labels changed, live | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:02:22.649 flutter On/Off Labels changed, relaunched | mq.boldText=false ; mq.onOffSwitchLabels=true ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852926033
+V12IOS2 03:02:39.702 native On/Off Labels changed, relaunched | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=true ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:02:53.631 switch On/Off Labels now=0 after 1 taps
+V12IOS2 03:03:08.030 flutter On/Off Labels back, live | mq.boldText=false ; mq.onOffSwitchLabels=true ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795852926033
+V12IOS2 03:03:20.959 native On/Off Labels back, live | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=true ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:03:45.033 flutter Auto-Play Video Previews before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795853004240
+V12IOS2 03:03:57.773 native Auto-Play Video Previews before | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:04:11.521 switch Auto-Play Video Previews now=0 after 1 taps
+V12IOS2 03:04:25.818 flutter Auto-Play Video Previews changed, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795853004240
+V12IOS2 03:04:38.621 native Auto-Play Video Previews changed, live | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:04:58.491 flutter Auto-Play Video Previews changed, relaunched | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=false ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795853081871
+V12IOS2 03:05:15.059 native Auto-Play Video Previews changed, relaunched | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=false ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:05:28.653 switch Auto-Play Video Previews now=1 after 1 taps
+V12IOS2 03:05:42.974 flutter Auto-Play Video Previews back, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=false ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795853081871
+V12IOS2 03:05:55.784 native Auto-Play Video Previews back, live | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=false ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:06:19.338 flutter Prefer Non-Blinking Cursor before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795853158834
+V12IOS2 03:06:32.045 native Prefer Non-Blinking Cursor before | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:06:45.489 switch Prefer Non-Blinking Cursor now=1 after 1 taps
+V12IOS2 03:06:59.740 flutter Prefer Non-Blinking Cursor changed, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795853158834
+V12IOS2 03:07:12.498 native Prefer Non-Blinking Cursor changed, live | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=false ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:07:32.130 flutter Prefer Non-Blinking Cursor changed, relaunched | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=true ; f.reduceMotion=false ; featureChanges=0 ; started=1795853235561
+V12IOS2 03:07:48.687 native Prefer Non-Blinking Cursor changed, relaunched | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=true ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+V12IOS2 03:08:02.202 switch Prefer Non-Blinking Cursor now=0 after 1 taps
+V12IOS2 03:08:16.417 flutter Prefer Non-Blinking Cursor back, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=true ; f.reduceMotion=false ; featureChanges=0 ; started=1795853235561
+V12IOS2 03:08:29.187 native Prefer Non-Blinking Cursor back, live | boldText=false ; legibilityWeight=regular ; onOffSwitchLabels=false ; darkerSystemColors=false ; invertColors=false ; videoAutoplay=true ; nonBlinking=true ; style=light ; contentSize=UICTContentSizeCategoryL ; events=
+Test Case '-[RunnerUITests.ProbeV12UITests testRound2Settings]' passed (772.761 seconds).
+== testRestore
+V12IOS restore Bold Text before=0 after=0
+V12IOS restore Increase Contrast before=0 after=0
+V12IOS restore On/Off Labels before=0 after=0
+V12IOS restore Smart Invert before=0 after=0
+V12IOS restore Reduce Transparency before=0 after=0
+V12IOS restore Differentiate Without Color before=0 after=0
+V12IOS restore: no switch Button Shapes
+V12IOS restore: no switch Reduce White Point
+V12IOS restore Reduce Motion before=0 after=0
+V12IOS restore Prefer Non-Blinking Cursor before=0 after=0
+V12IOS restore: no switch Dim Flashing Lights
+V12IOS restore Auto-Play Animated Images before=1 after=1
+V12IOS restore Auto-Play Video Previews before=1 after=1
+Test Case '-[RunnerUITests.ProbeV12UITests testRestore]' passed (156.084 seconds).
+== appearance after: light large disabled
+11a12,15
+>     DarkenSystemColors = 0;
+>     DifferentiateWithoutColor = 0;
+>     EnhancedBackgroundContrastEnabled = 0;
+>     EnhancedTextLegibilityEnabled = 0;
+16a21
+>     IncreaseButtonLegibilityEnabled = 0;
+20a26,29
+>     PointerIncreasedContrastEnabled = 0;
+>     PrefersNonBlinkingCursorIndicator = 0;
+>     ReduceMotionAutoplayAnimatedImagesEnabled = 1;
+>     ReduceMotionAutoplayVideoPreviewsEnabled = 1;
+21a31
+>     ReduceMotionReduceSlideTransitionsPreference = 0;

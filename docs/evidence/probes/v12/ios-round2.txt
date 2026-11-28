@@ -1,0 +1,132 @@
+    iPhone 17 (261C3598-4E19-49C3-8FDE-8244FD6C677E) (Booted) 
+== simctl ui before: light large disabled
+V12IOS2 01:38:28.170 watch flutter start
+V12IOS2 01:38:28.284 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:29.100 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:29.903 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:30.729 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:31.535 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:32.349 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:33.152 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:33.952 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:34.777 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:35.575 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:36.378 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:37.207 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:38.058 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:38.847 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:39.668 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:40.470 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:41.262 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:42.084 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:42.904 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:43.718 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:44.523 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:45.343 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:46.165 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:46.960 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:47.787 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:48.605 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:49.403 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:50.201 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:51.035 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:51.831 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+V12IOS2 01:38:52.665 watch flutter | mq.platformBrightness=light ; mq.textScale100=100.0 ; mq.highContrast=false ; theme=light ; featureChanges=0
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-af64ea4467724282a/ios/RunnerUITests/ProbeV12UITests.swift:315: error: -[RunnerUITests.ProbeV12UITests testRound2WatchFlutter] : Failed to get matching snapshot: No matches found for Elements matching predicate '"v12-theme" IN identifiers' from input {(
+Test Case '-[RunnerUITests.ProbeV12UITests testRound2WatchFlutter]' failed (32.381 seconds).
+V12IOS2 01:39:36.262 watch native start
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-af64ea4467724282a/ios/RunnerUITests/ProbeV12UITests.swift:319: error: -[RunnerUITests.ProbeV12UITests testRound2WatchNative] : Failed to get matching snapshot: Lost connection to the application (pid 11050). (Underlying Error: Couldn’t communicate with a helper application. Try your operation again. If that fails, quit and relaunch the application and try again. The connection to service created from an endpoint was invalidated: Failed to check-in, peer may have been unloaded: mach_error=10000003.)
+Test Case '-[RunnerUITests.ProbeV12UITests testRound2WatchNative]' failed (23.857 seconds).
+== simctl ui after watch: light large disabled
+== testRound2Appearance
+V12IOS2 01:50:24.305 flutter appearance before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795848605241
+V12IOS2 01:51:39.165 native appearance before | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 01:52:59.076 native XCUIDevice dark, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 01:53:13.249 flutter XCUIDevice dark, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795848605241
+V12IOS2 01:53:35.289 flutter XCUIDevice dark, live, 10 s later | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795848605241
+V12IOS2 01:53:54.775 flutter XCUIDevice dark, relaunched | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795848818236
+V12IOS2 01:54:13.781 flutter XCUIDevice back, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795848818236
+V12IOS2 01:55:28.592 native XCUIDevice back, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+Test Case '-[RunnerUITests.ProbeV12UITests testRound2Appearance]' passed (346.462 seconds).
+== testRound2Settings
+V12IOS2 01:56:14.531 flutter Increase Contrast before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795848955443
+V12IOS2 01:57:26.824 native Increase Contrast before | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 01:57:39.799 switch Increase Contrast now=1 after 1 taps
+V12IOS2 01:57:53.941 flutter Increase Contrast changed, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=true ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=1 ; started=1795848955443
+V12IOS2 01:59:08.941 native Increase Contrast changed, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 01:59:28.482 flutter Increase Contrast changed, relaunched | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=true ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795849151922
+V12IOS2 02:00:43.318 native Increase Contrast changed, relaunched | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:00:56.335 switch Increase Contrast now=0 after 1 taps
+V12IOS2 02:01:10.548 flutter Increase Contrast back, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=1 ; started=1795849151922
+V12IOS2 02:02:25.395 native Increase Contrast back, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:02:47.549 flutter Bold Text before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795849348373
+V12IOS2 02:03:59.831 native Bold Text before | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:04:13.015 switch Bold Text now=1 after 1 taps
+V12IOS2 02:04:27.196 flutter Bold Text changed, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795849348373
+V12IOS2 02:05:42.044 native Bold Text changed, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:06:01.489 flutter Bold Text changed, relaunched | mq.boldText=true ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795849545016
+V12IOS2 02:07:16.362 native Bold Text changed, relaunched | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:07:29.470 switch Bold Text now=0 after 1 taps
+V12IOS2 02:07:43.603 flutter Bold Text back, live | mq.boldText=true ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795849545016
+V12IOS2 02:08:58.429 native Bold Text back, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:09:20.412 flutter On/Off Labels before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795849741343
+V12IOS2 02:10:32.696 native On/Off Labels before | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:10:45.935 switch On/Off Labels now=1 after 1 taps
+V12IOS2 02:11:00.021 flutter On/Off Labels changed, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795849741343
+V12IOS2 02:12:14.999 native On/Off Labels changed, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:12:34.498 flutter On/Off Labels changed, relaunched | mq.boldText=false ; mq.onOffSwitchLabels=true ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795849937941
+V12IOS2 02:13:49.331 native On/Off Labels changed, relaunched | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:14:02.491 switch On/Off Labels now=0 after 1 taps
+V12IOS2 02:14:16.627 flutter On/Off Labels back, live | mq.boldText=false ; mq.onOffSwitchLabels=true ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795849937941
+V12IOS2 02:15:31.418 native On/Off Labels back, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:15:53.600 flutter Auto-Play Video Previews before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795850134382
+V12IOS2 02:17:05.885 native Auto-Play Video Previews before | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:17:19.105 switch Auto-Play Video Previews now=0 after 1 taps
+V12IOS2 02:17:33.205 flutter Auto-Play Video Previews changed, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795850134382
+V12IOS2 02:18:47.987 native Auto-Play Video Previews changed, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:19:07.467 flutter Auto-Play Video Previews changed, relaunched | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=false ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795850330948
+V12IOS2 02:20:22.332 native Auto-Play Video Previews changed, relaunched | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:20:35.362 switch Auto-Play Video Previews now=1 after 1 taps
+V12IOS2 02:20:49.497 flutter Auto-Play Video Previews back, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=false ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795850330948
+V12IOS2 02:22:04.351 native Auto-Play Video Previews back, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:22:26.373 flutter Prefer Non-Blinking Cursor before | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795850527316
+V12IOS2 02:23:38.622 native Prefer Non-Blinking Cursor before | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:23:51.734 switch Prefer Non-Blinking Cursor now=1 after 1 taps
+V12IOS2 02:24:05.954 flutter Prefer Non-Blinking Cursor changed, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=false ; f.reduceMotion=false ; featureChanges=0 ; started=1795850527316
+V12IOS2 02:25:20.803 native Prefer Non-Blinking Cursor changed, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:25:40.322 flutter Prefer Non-Blinking Cursor changed, relaunched | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=true ; f.reduceMotion=false ; featureChanges=0 ; started=1795850723757
+V12IOS2 02:26:55.150 native Prefer Non-Blinking Cursor changed, relaunched | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+V12IOS2 02:27:08.316 switch Prefer Non-Blinking Cursor now=0 after 1 taps
+V12IOS2 02:27:22.475 flutter Prefer Non-Blinking Cursor back, live | mq.boldText=false ; mq.onOffSwitchLabels=false ; mq.highContrast=false ; mq.invertColors=false ; mq.platformBrightness=light ; mq.textScale100=100.0 ; f.autoPlayVideos=true ; f.deterministicCursor=true ; f.reduceMotion=false ; featureChanges=0 ; started=1795850723757
+V12IOS2 02:28:37.302 native Prefer Non-Blinking Cursor back, live | boldText=<missing> ; legibilityWeight=<missing> ; onOffSwitchLabels=<missing> ; darkerSystemColors=<missing> ; invertColors=<missing> ; videoAutoplay=<missing> ; nonBlinking=<missing> ; style=<missing> ; contentSize=<missing> ; events=<missing>
+Test Case '-[RunnerUITests.ProbeV12UITests testRound2Settings]' passed (1986.241 seconds).
+== testRestore
+V12IOS restore Bold Text before=0 after=0
+V12IOS restore Increase Contrast before=0 after=0
+V12IOS restore On/Off Labels before=0 after=0
+V12IOS restore Smart Invert before=0 after=0
+V12IOS restore Reduce Transparency before=0 after=0
+V12IOS restore Differentiate Without Color before=0 after=0
+V12IOS restore: no switch Button Shapes
+V12IOS restore: no switch Reduce White Point
+V12IOS restore Reduce Motion before=0 after=0
+V12IOS restore Prefer Non-Blinking Cursor before=0 after=0
+V12IOS restore: no switch Dim Flashing Lights
+V12IOS restore Auto-Play Animated Images before=1 after=1
+V12IOS restore Auto-Play Video Previews before=1 after=1
+Test Case '-[RunnerUITests.ProbeV12UITests testRestore]' passed (145.964 seconds).
+== appearance after: light large disabled
+11a12,15
+>     DarkenSystemColors = 0;
+>     DifferentiateWithoutColor = 0;
+>     EnhancedBackgroundContrastEnabled = 0;
+>     EnhancedTextLegibilityEnabled = 0;
+16a21
+>     IncreaseButtonLegibilityEnabled = 0;
+20a26,29
+>     PointerIncreasedContrastEnabled = 0;
+>     PrefersNonBlinkingCursorIndicator = 0;
+>     ReduceMotionAutoplayAnimatedImagesEnabled = 1;
+>     ReduceMotionAutoplayVideoPreviewsEnabled = 1;
+21a31
+>     ReduceMotionReduceSlideTransitionsPreference = 0;

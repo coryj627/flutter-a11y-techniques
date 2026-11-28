@@ -1,0 +1,49 @@
+device: 17 API 37
+uimode help: UiModeManager service (uimode) commands:
+  help
+    Print this help text.
+  night [yes|no|auto|custom_schedule|custom_bedtime]
+    Set or read night mode.
+  car [yes|no]
+    Set or read car mode.
+  time [start|end] <ISO time>
+    Set custom start/end schedule time (night mode must be set to custom to apply).
+original: {('system', 'font_scale'): '1.0', ('global', 'transition_animation_scale'): '1.0', ('global', 'window_animation_scale'): '1.0', ('global', 'animator_duration_scale'): None, ('secure', 'accessibility_display_inversion_enabled'): None, ('secure', 'font_weight_adjustment'): None, ('secure', 'high_text_contrast_enabled'): None, ('secure', 'contrast_level'): None, ('system', 'time_12_24'): None, ('secure', 'accessibility_display_daltonizer_enabled'): None, ('secure', 'accessibility_display_daltonizer'): None, ('secure', 'enabled_accessibility_services'): None, ('secure', 'accessibility_enabled'): '0'} night: Night mode: no contrast: Unknown command: contrast
+STEP baseline
+STEP dark on
+STEP dark off
+STEP font_scale 1.5 on
+STEP font_scale 1.5 off
+STEP font_scale 2.0 on
+STEP font_scale 2.0 off
+STEP animator_duration_scale 0 on
+STEP animator_duration_scale 0 off
+STEP transition_animation_scale 0 on
+STEP transition_animation_scale 0 off
+STEP remove animations (all three 0) on
+STEP remove animations (all three 0) off
+STEP invert colours on
+STEP invert colours off
+STEP high contrast text on
+STEP high contrast text off
+STEP contrast_level 1.0 (setting) on
+STEP contrast_level 1.0 (setting) off
+STEP contrast high (cmd uimode) on
+STEP contrast high (cmd uimode) off
+STEP time 24 hour on
+STEP time 24 hour off
+STEP colour correction on
+STEP colour correction off
+STEP uiautomator dump, no accessibility service
+STEP relaunch after dump
+STEP bold text on
+STEP bold text off
+STEP relaunch before TalkBack
+STEP talkback on
+STEP talkback off
+STEP talkback on, then app started
+STEP app started with talkback on
+STEP talkback off, app running
+STEP end
+restored: {('system', 'font_scale'): '1.0', ('global', 'transition_animation_scale'): '1.0', ('global', 'window_animation_scale'): '1.0', ('global', 'animator_duration_scale'): None, ('secure', 'accessibility_display_inversion_enabled'): None, ('secure', 'font_weight_adjustment'): None, ('secure', 'high_text_contrast_enabled'): None, ('secure', 'contrast_level'): None, ('system', 'time_12_24'): None, ('secure', 'accessibility_display_daltonizer_enabled'): None, ('secure', 'accessibility_display_daltonizer'): None, ('secure', 'enabled_accessibility_services'): None, ('secure', 'accessibility_enabled'): '0'} night: Night mode: no contrast: Unknown command: contrast
+same as before: True

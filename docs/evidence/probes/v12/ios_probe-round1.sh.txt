@@ -1,0 +1,56 @@
+#!/bin/sh
+# V12 probe on iOS, under tool/with_devices.py (throwaway; kept as
+# docs/evidence/probes/v12/ios_probe.sh.txt). Run from the worktree root,
+# after `fvm flutter build ios --simulator --debug -t lib/probe.dart` and
+# `xcodebuild build-for-testing` into build/ios_uitest.
+#
+# Part 1: the probe app started with its output captured (simctl launch
+# --console-pty), and `xcrun simctl ui` turning appearance, text size and
+# increase contrast on and back. Part 2: ProbeV12UITests, which drives
+# appearance, VoiceOver and the Settings app. The simulator's accessibility
+# defaults are printed before and after, to show every setting put back.
+OUT=$1
+BUNDLE=dev.fluttera11y.flutterA11yTechniques
+xcrun simctl list devices booted | grep -i "iphone"
+echo "== accessibility defaults before"
+xcrun simctl spawn booted defaults read com.apple.Accessibility > "$OUT/ios-a11y-defaults-before.txt" 2>&1
+echo "== simctl ui before: $(xcrun simctl ui booted appearance) $(xcrun simctl ui booted content_size) $(xcrun simctl ui booted increase_contrast)"
+APP=build/ios_uitest/Build/Products/Debug-iphonesimulator/Runner.app
+xcrun simctl install booted "$APP"
+xcrun simctl terminate booted $BUNDLE 2>/dev/null
+xcrun simctl launch --console-pty --terminate-running-process booted $BUNDLE > "$OUT/ios-console-raw.txt" 2>&1 &
+LAUNCH=$!
+sleep 15
+step() { echo "V12STEP $(date +%H:%M:%S) $1" >> "$OUT/ios-steps.txt"; echo "STEP $1"; }
+: > "$OUT/ios-steps.txt"
+step baseline; sleep 4
+step "appearance dark"; xcrun simctl ui booted appearance dark; sleep 4
+step "appearance light"; xcrun simctl ui booted appearance light; sleep 4
+step "content_size accessibility-extra-extra-extra-large"; xcrun simctl ui booted content_size accessibility-extra-extra-extra-large; sleep 4
+step "content_size large"; xcrun simctl ui booted content_size large; sleep 4
+step "content_size extra-small"; xcrun simctl ui booted content_size extra-small; sleep 4
+step "content_size large"; xcrun simctl ui booted content_size large; sleep 4
+step "increase_contrast enabled"; xcrun simctl ui booted increase_contrast enabled; sleep 4
+step "increase_contrast disabled"; xcrun simctl ui booted increase_contrast disabled; sleep 4
+step end
+xcrun simctl terminate booted $BUNDLE 2>/dev/null
+sleep 2
+kill $LAUNCH 2>/dev/null
+echo "== simctl ui after part 1: $(xcrun simctl ui booted appearance) $(xcrun simctl ui booted content_size) $(xcrun simctl ui booted increase_contrast)"
+cd ios || exit 1
+run() {
+  echo "== $1"
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/ProbeV12UITests/$1" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep --line-buffered -E "V12IOS|error:|passed|failed|skipped" | grep --line-buffered -v "Test Suite"
+}
+for t in ${TESTS:-testAppearance testVoiceOver testDisplaySettings testMotionSettings}; do run $t; done
+xcrun simctl terminate booted $BUNDLE 2>/dev/null
+xcrun simctl terminate booted com.apple.Preferences 2>/dev/null
+cd ..
+echo "== accessibility defaults after"
+xcrun simctl spawn booted defaults read com.apple.Accessibility > "$OUT/ios-a11y-defaults-after.txt" 2>&1
+diff "$OUT/ios-a11y-defaults-before.txt" "$OUT/ios-a11y-defaults-after.txt" && echo "defaults unchanged"
+echo "== simctl ui after: $(xcrun simctl ui booted appearance) $(xcrun simctl ui booted content_size) $(xcrun simctl ui booted increase_contrast)"
+exit 0

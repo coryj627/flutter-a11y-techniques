@@ -1,0 +1,22 @@
+// Throwaway: serves the V12 probe build for probe_v12.spec.js. Not
+// committed; kept as docs/evidence/probes/v12/probe_v12.config.js.txt.
+// V12_BUILD chooses the build (build/web_probe, or build/web_probe_noensure
+// for the probe without ensureSemantics at start).
+import { defineConfig } from '@playwright/test';
+import { webServer } from './support/ports.js';
+
+const port = Number(process.env.V12_PORT ?? 29873);
+
+export default defineConfig({
+  testDir: '.',
+  testMatch: /probe_v12\.spec\.js$/,
+  reporter: 'list',
+  workers: 1,
+  timeout: 300_000,
+  use: { baseURL: `http://127.0.0.1:${port}` },
+  projects: [
+    { name: 'chromium', use: { browserName: 'chromium' } },
+    { name: 'webkit', use: { browserName: 'webkit' } },
+  ],
+  webServer: webServer(process.env.V12_BUILD ?? 'build/web_probe', port),
+});
