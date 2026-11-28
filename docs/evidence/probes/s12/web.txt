@@ -1,0 +1,403 @@
+p01 element <flt-semantics><span>p01 Note</span></flt-semantics>
+p01 element <flt-semantics role="button" tabindex="0" flt-tappable="">p01 Share</flt-semantics>
+p01 element <flt-semantics role="button" tabindex="0" flt-tappable="">p01 After</flt-semantics>
+p01 ax                     role=generic name="" props=
+p01 ax                       role=StaticText name="p01 Note" props=
+p01 ax                     role=button name="p01 Share" props=focusable:true
+p01 ax                       role=StaticText name="p01 Share" props=
+p01 ax                     role=button name="p01 After" props=focusable:true
+p01 ax                       role=StaticText name="p01 After" props=
+p01 ax                     role=generic name="" props=
+p01 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p01 Share" -> FLT-SEMANTICS[role=button] "p01 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p01 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p01 the screen closed
+p01 2 Tab(s) (on FLT-SEMANTICS[role=button] "p01 Share") then Enter: p01 taps: a=1 b=0
+p01 3 Tab(s) (on FLT-SEMANTICS[role=button] "p01 After") then Enter: p01 taps: a=0 b=1
+p01 click at 56,130 (between Before and After): p01 taps: a=1 b=0
+p02 element <flt-semantics role="button" tabindex="0" flt-tappable="">p02 After</flt-semantics>
+p02 ax                     role=button name="p02 After" props=focusable:true
+p02 ax                       role=StaticText name="p02 After" props=
+p02 ax                     role=generic name="" props=
+p02 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p02 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p02 After"
+p03 element <flt-semantics role="button" tabindex="0" flt-tappable="">p03 After</flt-semantics>
+p03 ax                     role=button name="p03 After" props=focusable:true
+p03 ax                       role=StaticText name="p03 After" props=
+p03 ax                     role=generic name="" props=
+p03 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p03 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p03 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p03 the screen closed
+p03 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p03 taps: a=1 b=0
+p03 3 Tab(s) (on FLT-SEMANTICS[role=button] "p03 After") then Enter: p03 taps: a=0 b=1
+p03 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: (gone)
+p03 the screen closed
+p03 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: p03 taps: a=1 b=0
+p03 3 Tab(s) (on FLT-SEMANTICS[role=button] "p03 After") then Space: p03 taps: a=0 b=1
+p03 click at 56,120 (between Before and After): p03 taps: a=1 b=0
+p04 element <flt-semantics><span>p04 Replacement</span></flt-semantics>
+p04 element <flt-semantics role="button" tabindex="0" flt-tappable="">p04 After</flt-semantics>
+p04 ax                     role=generic name="" props=
+p04 ax                       role=StaticText name="p04 Replacement" props=
+p04 ax                     role=button name="p04 After" props=focusable:true
+p04 ax                       role=StaticText name="p04 After" props=
+p04 ax                     role=generic name="" props=
+p04 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p04 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p04 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p04 the screen closed
+p04 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p04 taps: a=1 b=0
+p04 3 Tab(s) (on FLT-SEMANTICS[role=button] "p04 After") then Enter: p04 taps: a=0 b=1
+p04 click at 56,120 (between Before and After): p04 taps: a=1 b=0
+p05 element <flt-semantics role="button" tabindex="0" flt-tappable="">p05 After</flt-semantics>
+p05 ax                     role=button name="p05 After" props=focusable:true
+p05 ax                       role=StaticText name="p05 After" props=
+p05 ax                     role=generic name="" props=
+p05 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p05 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p05 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p05 the screen closed
+p05 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p05 taps: a=1 b=0
+p05 3 Tab(s) (on FLT-SEMANTICS[role=button] "p05 After") then Enter: p05 taps: a=0 b=1
+p05 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: (gone)
+p05 the screen closed
+p05 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: p05 taps: a=1 b=0
+p05 3 Tab(s) (on FLT-SEMANTICS[role=button] "p05 After") then Space: p05 taps: a=0 b=1
+p05 click at 56,104 (between Before and After): p05 taps: a=0 b=0
+p06 element <flt-semantics role="button" tabindex="0" flt-tappable="">p06 After</flt-semantics>
+p06 ax                     role=button name="p06 After" props=focusable:true
+p06 ax                       role=StaticText name="p06 After" props=
+p06 ax                     role=generic name="" props=
+p06 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p06 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p06 After"
+p07 element <flt-semantics role="button" tabindex="0" flt-tappable="">p07 After</flt-semantics>
+p07 ax                     role=button name="p07 After" props=focusable:true
+p07 ax                       role=StaticText name="p07 After" props=
+p07 ax                     role=generic name="" props=
+p07 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p07 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p07 After"
+p07 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p07 the screen closed
+p07 2 Tab(s) (on FLT-SEMANTICS[role=button] "p07 After") then Enter: p07 taps: a=0 b=1
+p07 3 Tab(s) (on (page: BODY)) then Enter: p07 taps: a=0 b=0
+p07 click at 56,104 (between Before and After): p07 taps: a=0 b=0
+p08 element <flt-semantics role="button" tabindex="0" flt-tappable="">p08 After</flt-semantics>
+p08 ax                     role=button name="p08 After" props=focusable:true
+p08 ax                       role=StaticText name="p08 After" props=
+p08 ax                     role=generic name="" props=
+p08 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p08 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p08 After"
+p09 element <flt-semantics role="button" tabindex="0">p09 Share</flt-semantics>
+p09 element <flt-semantics role="button" tabindex="0" flt-tappable="">p09 After</flt-semantics>
+p09 ax                     role=button name="p09 Share" props=focusable:true
+p09 ax                       role=StaticText name="p09 Share" props=
+p09 ax                     role=button name="p09 After" props=focusable:true
+p09 ax                       role=StaticText name="p09 After" props=
+p09 ax                     role=generic name="" props=
+p09 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p09 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p09 After"
+p09 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p09 the screen closed
+p09 2 Tab(s) (on FLT-SEMANTICS[role=button] "p09 After") then Enter: p09 taps: a=0 b=1
+p09 3 Tab(s) (on (page: BODY)) then Enter: p09 taps: a=0 b=0
+p09 click at 56,120 (between Before and After): p09 taps: a=0 b=0
+p10 element <flt-semantics role="button" tabindex="0" flt-tappable="">p10 After</flt-semantics>
+p10 ax                     role=button name="p10 After" props=focusable:true
+p10 ax                       role=StaticText name="p10 After" props=
+p10 ax                     role=generic name="" props=
+p10 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p10 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p10 After"
+p10 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p10 the screen closed
+p10 2 Tab(s) (on FLT-SEMANTICS[role=button] "p10 After") then Enter: p10 taps: a=0 b=1
+p10 3 Tab(s) (on (page: BODY)) then Enter: p10 taps: a=0 b=0
+p10 click at 56,120 (between Before and After): p10 taps: a=1 b=0
+p11 element <flt-semantics role="button" tabindex="0" flt-tappable="">p11 Share</flt-semantics>
+p11 element <flt-semantics role="button" tabindex="0" flt-tappable="">p11 After</flt-semantics>
+p11 ax                     role=button name="p11 Share" props=focusable:true
+p11 ax                       role=StaticText name="p11 Share" props=
+p11 ax                     role=button name="p11 After" props=focusable:true
+p11 ax                       role=StaticText name="p11 After" props=
+p11 ax                     role=generic name="" props=
+p11 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p11 Share" -> FLT-SEMANTICS[role=button] "p11 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p11 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p11 the screen closed
+p11 2 Tab(s) (on FLT-SEMANTICS[role=button] "p11 Share") then Enter: p11 taps: a=1 b=0
+p11 3 Tab(s) (on FLT-SEMANTICS[role=button] "p11 After") then Enter: p11 taps: a=0 b=1
+p11 click at 56,120 (between Before and After): p11 taps: a=1 b=0
+p12 element <flt-semantics role="button" tabindex="0" flt-tappable="">p12 After</flt-semantics>
+p12 ax                     role=button name="p12 After" props=focusable:true
+p12 ax                       role=StaticText name="p12 After" props=
+p12 ax                     role=generic name="" props=
+p12 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p12 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p12 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p12 the screen closed
+p12 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p12 taps: a=1 b=0
+p12 3 Tab(s) (on FLT-SEMANTICS[role=button] "p12 After") then Enter: p12 taps: a=0 b=1
+p12 click at 56,104 (between Before and After): p12 taps: a=0 b=0
+p13 element <flt-semantics role="button" tabindex="0" flt-tappable="">p13 After</flt-semantics>
+p13 ax                     role=button name="p13 After" props=focusable:true
+p13 ax                       role=StaticText name="p13 After" props=
+p13 ax                     role=generic name="" props=
+p13 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p13 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p13 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p13 the screen closed
+p13 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p13 taps: a=1 b=0
+p13 3 Tab(s) (on FLT-SEMANTICS[role=button] "p13 After") then Enter: p13 taps: a=0 b=1
+p13 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: (gone)
+p13 the screen closed
+p13 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: p13 taps: a=1 b=0
+p13 3 Tab(s) (on FLT-SEMANTICS[role=button] "p13 After") then Space: p13 taps: a=0 b=1
+p13 click at 56,120 (between Before and After): p13 taps: a=1 b=0
+p14 element <flt-semantics role="button" tabindex="0" flt-tappable="">p14 Share</flt-semantics>
+p14 element <flt-semantics role="button" tabindex="0" flt-tappable="">p14 After</flt-semantics>
+p14 ax                     role=button name="p14 Share" props=focusable:true
+p14 ax                       role=StaticText name="p14 Share" props=
+p14 ax                     role=button name="p14 After" props=focusable:true
+p14 ax                       role=StaticText name="p14 After" props=
+p14 ax                     role=generic name="" props=
+p14 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p14 Share" -> FLT-SEMANTICS[role=button] "p14 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p14 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p14 the screen closed
+p14 2 Tab(s) (on FLT-SEMANTICS[role=button] "p14 Share") then Enter: p14 taps: a=1 b=0
+p14 3 Tab(s) (on FLT-SEMANTICS[role=button] "p14 After") then Enter: p14 taps: a=0 b=1
+p14 click at 56,120 (between Before and After): p14 taps: a=1 b=0
+p15 element <flt-semantics role="button" tabindex="0" flt-tappable="">p15 After</flt-semantics>
+p15 ax                     role=button name="p15 After" props=focusable:true
+p15 ax                       role=StaticText name="p15 After" props=
+p15 ax                     role=generic name="" props=
+p15 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p15 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p15 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p15 the screen closed
+p15 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p15 taps: a=1 b=0
+p15 3 Tab(s) (on FLT-SEMANTICS[role=button] "p15 After") then Enter: p15 taps: a=0 b=1
+p15 click at 56,120 (between Before and After): p15 taps: a=1 b=0
+p16 element <flt-semantics role="button" tabindex="0">p16 Share</flt-semantics>
+p16 element <flt-semantics role="button" tabindex="0" flt-tappable="">p16 After</flt-semantics>
+p16 ax                     role=button name="p16 Share" props=focusable:true
+p16 ax                       role=StaticText name="p16 Share" props=
+p16 ax                     role=button name="p16 After" props=focusable:true
+p16 ax                       role=StaticText name="p16 After" props=
+p16 ax                     role=generic name="" props=
+p16 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p16 Share" -> FLT-SEMANTICS[role=button] "p16 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p16 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p16 the screen closed
+p16 2 Tab(s) (on FLT-SEMANTICS[role=button] "p16 Share") then Enter: p16 taps: a=1 b=0
+p16 3 Tab(s) (on FLT-SEMANTICS[role=button] "p16 After") then Enter: p16 taps: a=0 b=1
+p16 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: (gone)
+p16 the screen closed
+p16 2 Tab(s) (on FLT-SEMANTICS[role=button] "p16 Share") then Space: p16 taps: a=1 b=0
+p16 3 Tab(s) (on FLT-SEMANTICS[role=button] "p16 After") then Space: p16 taps: a=0 b=1
+p16 click at 56,120 (between Before and After): p16 taps: a=0 b=0
+p17 element <flt-semantics role="button" tabindex="0">p17 Share</flt-semantics>
+p17 element <flt-semantics role="button" tabindex="0" flt-tappable="">p17 After</flt-semantics>
+p17 ax                     role=button name="p17 Share" props=focusable:true
+p17 ax                       role=StaticText name="p17 Share" props=
+p17 ax                     role=button name="p17 After" props=focusable:true
+p17 ax                       role=StaticText name="p17 After" props=
+p17 ax                     role=generic name="" props=
+p17 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p17 Share" -> FLT-SEMANTICS[role=button] "p17 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p17 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p17 the screen closed
+p17 2 Tab(s) (on FLT-SEMANTICS[role=button] "p17 Share") then Enter: p17 taps: a=1 b=0
+p17 3 Tab(s) (on FLT-SEMANTICS[role=button] "p17 After") then Enter: p17 taps: a=0 b=1
+p17 click at 56,120 (between Before and After): p17 taps: a=0 b=0
+p18 element <flt-semantics role="button" tabindex="0" flt-tappable="">p18 After</flt-semantics>
+p18 ax                     role=button name="p18 After" props=focusable:true
+p18 ax                       role=StaticText name="p18 After" props=
+p18 ax                     role=generic name="" props=
+p18 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p18 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p18 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p18 the screen closed
+p18 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p18 taps: a=1 b=0
+p18 3 Tab(s) (on FLT-SEMANTICS[role=button] "p18 After") then Enter: p18 taps: a=0 b=1
+p18 click at 56,120 (between Before and After): p18 taps: a=0 b=0
+p19 element <flt-semantics role="button" tabindex="0" flt-tappable="">p19 Share</flt-semantics>
+p19 element <flt-semantics role="button" tabindex="0" flt-tappable="">p19 After</flt-semantics>
+p19 ax                     role=button name="p19 Share" props=focusable:true
+p19 ax                       role=StaticText name="p19 Share" props=
+p19 ax                     role=button name="p19 After" props=focusable:true
+p19 ax                       role=StaticText name="p19 After" props=
+p19 ax                     role=generic name="" props=
+p19 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p19 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p19 After"
+p19 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p19 the screen closed
+p19 2 Tab(s) (on FLT-SEMANTICS[role=button] "p19 After") then Enter: p19 taps: a=0 b=1
+p19 3 Tab(s) (on (page: BODY)) then Enter: p19 taps: a=0 b=0
+p19 click at 56,120 (between Before and After): p19 taps: a=1 b=0
+p20 element <flt-semantics role="button" tabindex="0" flt-tappable="">p20 After</flt-semantics>
+p20 ax                     role=button name="p20 After" props=focusable:true
+p20 ax                       role=StaticText name="p20 After" props=
+p20 ax                     role=generic name="" props=
+p20 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p20 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p20 After"
+p20 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p20 the screen closed
+p20 2 Tab(s) (on FLT-SEMANTICS[role=button] "p20 After") then Enter: p20 taps: a=0 b=1
+p20 3 Tab(s) (on (page: BODY)) then Enter: p20 taps: a=0 b=0
+p20 click at 56,120 (between Before and After): p20 taps: a=1 b=0
+p21 element <flt-semantics><span>p21 Note</span></flt-semantics>
+p21 element <flt-semantics role="button" tabindex="0" flt-tappable="">p21 After</flt-semantics>
+p21 ax                     role=generic name="" props=
+p21 ax                       role=StaticText name="p21 Note" props=
+p21 ax                     role=button name="p21 After" props=focusable:true
+p21 ax                       role=StaticText name="p21 After" props=
+p21 ax                     role=generic name="" props=
+p21 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p21 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p21 After"
+p22 element <flt-semantics><flt-semantics role="button" tabindex="0" flt-tappable="">p22 Share</flt-semantics></flt-semantics>
+p22 element <flt-semantics role="button" tabindex="0" flt-tappable="">p22 After</flt-semantics>
+p22 ax                     role=generic name="" props=
+p22 ax                       role=button name="p22 Share" props=focusable:true
+p22 ax                         role=StaticText name="p22 Share" props=
+p22 ax                     role=button name="p22 After" props=focusable:true
+p22 ax                       role=StaticText name="p22 After" props=
+p22 ax                     role=generic name="" props=
+p22 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p22 Share" -> FLT-SEMANTICS[role=button] "p22 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p22 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p22 the screen closed
+p22 2 Tab(s) (on FLT-SEMANTICS[role=button] "p22 Share") then Enter: p22 taps: a=1 b=0
+p22 3 Tab(s) (on FLT-SEMANTICS[role=button] "p22 After") then Enter: p22 taps: a=0 b=1
+p22 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: (gone)
+p22 the screen closed
+p22 2 Tab(s) (on FLT-SEMANTICS[role=button] "p22 Share") then Space: p22 taps: a=1 b=0
+p22 3 Tab(s) (on FLT-SEMANTICS[role=button] "p22 After") then Space: p22 taps: a=0 b=1
+p22 click at 56,120 (between Before and After): p22 taps: a=1 b=0
+p23 element <flt-semantics><span>p23 Banner</span></flt-semantics>
+p23 element <flt-semantics role="button" tabindex="0" flt-tappable="">p23 After</flt-semantics>
+p23 ax                     role=generic name="" props=
+p23 ax                       role=StaticText name="p23 Banner" props=
+p23 ax                     role=button name="p23 After" props=focusable:true
+p23 ax                       role=StaticText name="p23 After" props=
+p23 ax                     role=generic name="" props=
+p23 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p23 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p23 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p23 the screen closed
+p23 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p23 taps: a=1 b=0
+p23 3 Tab(s) (on FLT-SEMANTICS[role=button] "p23 After") then Enter: p23 taps: a=0 b=1
+p23 click at 56,140 (between Before and After): p23 taps: a=1 b=0
+p24 element (no Before element)
+p24 element <flt-semantics-host><flt-semantics><flt-semantics><flt-semantics><flt-semantics><flt-semantics><flt-semantics role="button" tabindex="0" flt-tappable="">Back</flt-semantics><h2>Probe p24</h2></flt-semantics><flt-semantics role="group"><flt-semantics><span>p24 Banner</span></flt-semantics><flt-semantics role="button" tabindex="0" flt-tappable="">p24 After</flt-semantics><flt-semantics flt-semantics-identifier="p24-taps"><span>p24 taps: a=0 b=0</span></flt-semantics></flt-semantics></flt-semantics></flt-semantics></flt-semantics></flt-semantics></flt-semantics-host>
+p24 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p24 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p24 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p24 the screen closed
+p24 2 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: p24 taps: a=1 b=0
+p24 3 Tab(s) (on FLT-SEMANTICS[role=button] "p24 After") then Enter: p24 taps: a=0 b=1
+p25 element <flt-semantics><span>❝ p25 Quote</span></flt-semantics>
+p25 element <flt-semantics><span>· · ·</span></flt-semantics>
+p25 element <flt-semantics><span>✦ ✦ ✦</span></flt-semantics>
+p25 element <flt-semantics role="button" tabindex="0" flt-tappable="">p25 After</flt-semantics>
+p25 ax                     role=generic name="" props=
+p25 ax                       role=StaticText name="❝ p25 Quote" props=
+p25 ax                     role=generic name="" props=
+p25 ax                       role=StaticText name="· · ·" props=
+p25 ax                     role=generic name="" props=
+p25 ax                       role=StaticText name="✦ ✦ ✦" props=
+p25 ax                     role=button name="p25 After" props=focusable:true
+p25 ax                       role=StaticText name="p25 After" props=
+p25 ax                     role=generic name="" props=
+p25 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p25 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p25 After"
+p26 element <flt-semantics><span>p26 Quote</span></flt-semantics>
+p26 element <flt-semantics role="button" tabindex="0" flt-tappable="">p26 After</flt-semantics>
+p26 ax                     role=generic name="" props=
+p26 ax                       role=StaticText name="p26 Quote" props=
+p26 ax                     role=button name="p26 After" props=focusable:true
+p26 ax                       role=StaticText name="p26 After" props=
+p26 ax                     role=generic name="" props=
+p26 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p26 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p26 After"
+p27 element <flt-semantics><span>3</span></flt-semantics>
+p27 element <flt-semantics><span>p27 Inbox, 3 unread</span></flt-semantics>
+p27 element <flt-semantics role="button" tabindex="0" flt-tappable="">p27 After</flt-semantics>
+p27 ax                     role=generic name="" props=
+p27 ax                       role=StaticText name="3" props=
+p27 ax                     role=generic name="" props=
+p27 ax                       role=StaticText name="p27 Inbox, 3 unread" props=
+p27 ax                     role=button name="p27 After" props=focusable:true
+p27 ax                       role=StaticText name="p27 After" props=
+p27 ax                     role=generic name="" props=
+p27 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p27 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p27 After"
+p28 element <flt-semantics><span>p28 Inbox, 3 unread</span></flt-semantics>
+p28 element <flt-semantics role="button" tabindex="0" flt-tappable="">p28 After</flt-semantics>
+p28 ax                     role=generic name="" props=
+p28 ax                       role=StaticText name="p28 Inbox, 3 unread" props=
+p28 ax                     role=button name="p28 After" props=focusable:true
+p28 ax                       role=StaticText name="p28 After" props=
+p28 ax                     role=generic name="" props=
+p28 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p28 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p28 After"
+p29 element <flt-semantics><span>p29 Pane one</span></flt-semantics>
+p29 element <flt-semantics role="button" tabindex="0" flt-tappable="">p29 After</flt-semantics>
+p29 ax                     role=generic name="" props=
+p29 ax                       role=StaticText name="p29 Pane one" props=
+p29 ax                     role=button name="p29 After" props=focusable:true
+p29 ax                       role=StaticText name="p29 After" props=
+p29 ax                     role=generic name="" props=
+p29 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p29 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p29 After"
+p29 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p29 the screen closed
+p29 2 Tab(s) (on FLT-SEMANTICS[role=button] "p29 After") then Enter: p29 taps: a=0 b=1
+p29 3 Tab(s) (on (page: BODY)) then Enter: p29 taps: a=0 b=0
+p29 click at 56,130 (between Before and After): p29 taps: a=0 b=0
+p30 element <flt-semantics><span>p30 Full text</span></flt-semantics>
+p30 element <flt-semantics role="button" tabindex="0" flt-tappable="">p30 After</flt-semantics>
+p30 ax                     role=generic name="" props=
+p30 ax                       role=StaticText name="p30 Full text" props=
+p30 ax                     role=button name="p30 After" props=focusable:true
+p30 ax                       role=StaticText name="p30 After" props=
+p30 ax                     role=generic name="" props=
+p30 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p30 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p30 After"
+p31 element <flt-semantics tabindex="0"><span>p31 Share</span></flt-semantics>
+p31 element <flt-semantics role="button" tabindex="0" flt-tappable="">p31 After</flt-semantics>
+p31 ax                     role=generic name="" props=focusable:true
+p31 ax                       role=StaticText name="p31 Share" props=
+p31 ax                     role=button name="p31 After" props=focusable:true
+p31 ax                       role=StaticText name="p31 After" props=
+p31 ax                     role=generic name="" props=
+p31 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS "p31 Share" -> FLT-SEMANTICS[role=button] "p31 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back"
+p31 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p31 the screen closed
+p31 2 Tab(s) (on FLT-SEMANTICS "p31 Share") then Enter: p31 taps: a=1 b=0
+p31 3 Tab(s) (on FLT-SEMANTICS[role=button] "p31 After") then Enter: p31 taps: a=0 b=1
+p31 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Space: (gone)
+p31 the screen closed
+p31 2 Tab(s) (on FLT-SEMANTICS "p31 Share") then Space: p31 taps: a=1 b=0
+p31 3 Tab(s) (on FLT-SEMANTICS[role=button] "p31 After") then Space: p31 taps: a=0 b=1
+p31 click at 56,114 (between Before and After): p31 taps: a=1 b=0
+p32 element <flt-semantics><span>p32 Share</span></flt-semantics>
+p32 element <flt-semantics role="button" tabindex="0" flt-tappable="">p32 After</flt-semantics>
+p32 ax                     role=generic name="" props=
+p32 ax                       role=StaticText name="p32 Share" props=
+p32 ax                     role=button name="p32 After" props=focusable:true
+p32 ax                       role=StaticText name="p32 After" props=
+p32 ax                     role=generic name="" props=
+p32 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p32 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p32 After"
+p32 1 Tab(s) (on FLT-SEMANTICS[role=button] "Back") then Enter: (gone)
+p32 the screen closed
+p32 2 Tab(s) (on FLT-SEMANTICS[role=button] "p32 After") then Enter: p32 taps: a=0 b=1
+p32 3 Tab(s) (on (page: BODY)) then Enter: p32 taps: a=0 b=0
+p32 click at 56,114 (between Before and After): p32 taps: a=1 b=0
+p33 element <flt-semantics><span>p33 $30</span></flt-semantics>
+p33 element <flt-semantics><span>p33 Now $24</span></flt-semantics>
+p33 element <flt-semantics role="button" tabindex="0" flt-tappable="">p33 After</flt-semantics>
+p33 ax                     role=generic name="" props=
+p33 ax                       role=StaticText name="p33 $30" props=
+p33 ax                     role=generic name="" props=
+p33 ax                       role=StaticText name="p33 Now $24" props=
+p33 ax                     role=button name="p33 After" props=focusable:true
+p33 ax                       role=StaticText name="p33 After" props=
+p33 ax                     role=generic name="" props=
+p33 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p33 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p33 After"
+p34 element <flt-semantics role="button" tabindex="0" flt-tappable="">p34 After</flt-semantics>
+p34 ax                     role=button name="p34 After" props=focusable:true
+p34 ax                       role=StaticText name="p34 After" props=
+p34 ax                     role=generic name="" props=
+p34 tab stops FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p34 After" -> (page: BODY) -> (page: FLUTTER-VIEW) -> FLT-SEMANTICS[role=button] "Back" -> FLT-SEMANTICS[role=button] "p34 After"
+html ax role=RootWebArea name="S12 HTML comparison" props=focusable:true,focused:true,url:"http://127.0.0.1:29873/html.html"
+html ax       role=paragraph name="" props=
+html ax         role=StaticText name="h00 Before" props=
+html ax       role=button name="h01 Plain button" props=invalid:"false",focusable:true
+html ax         role=StaticText name="h01 Plain button" props=
+html ax         role=paragraph name="" props=
+html ax           role=StaticText name="h05 Text at opacity 0" props=
+html ax         role=button name="h05 Button at opacity 0" props=invalid:"false",focusable:true
+html ax           role=StaticText name="h05 Button at opacity 0" props=
+html ax       role=paragraph name="" props=
+html ax         role=StaticText name="h07 Note after a hidden ornament" props=
+html ax       role=paragraph name="" props=
+html ax         role=StaticText name="✦ ✦ ✦ h08 Note after an ornament, not hidden" props=
+html ax       role=button name="h09 After" props=invalid:"false",focusable:true
+html ax         role=StaticText name="h09 After" props=
+html tab stops b-plain -> b-aria-hidden -> b-opacity -> b-after -> BODY -> b-plain -> b-aria-hidden -> b-opacity -> b-after -> BODY
+html focus() on #b-aria-hidden: focused
+html focus() on #b-inert: not focused (active: b-aria-hidden)
+html focus() on #b-hidden: not focused (active: b-aria-hidden)
+html focus() on #b-opacity: focused
+html focus() on #b-visibility: not focused (active: b-opacity)

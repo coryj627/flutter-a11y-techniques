@@ -555,7 +555,7 @@ class StrictWalks(unittest.TestCase):
         self.assertEqual(failures, ["c05-good-custom-panel: never focused"])
 
     def test_the_strict_techniques(self):
-        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10", "S11"})
+        self.assertEqual(tb.STRICT, {"C05", "C06", "C13", "C18", "C26", "S06", "S08", "S09", "S10", "S11", "S12"})
 
     def test_c05_has_no_silent_rows(self):
         self.assertEqual([i for i in self.expected if tb.is_silent(i)], [])
@@ -1670,6 +1670,76 @@ class Techniques(unittest.TestCase):
         for technique in common.TECHNIQUES:
             prefix = technique.lower() + "-"
             self.assertTrue(any(k.startswith(prefix) for k in tb.EXPECT), technique)
+
+
+class S12WholeUtterances(unittest.TestCase):
+    """S12's strict rows are whole-utterance rows ("== A / B" in said()):
+    the false passes S10's review found on substring rows, a duplicated
+    phrase, an unexpected role word, a wrong token, and a sibling's label,
+    must each be wrong for every row, and the committed transcript must
+    still be right."""
+    TRANSCRIPT = os.path.join(tb.ROOT, "docs", "evidence", "S12", "talkback-android.md")
+
+    def rows(self):
+        return {i: tb.EXPECT[i] for i in tb.EXPECT if i.startswith("s12-")}
+
+    def heard(self, ident):
+        """The utterances a right reading of `ident` has: its "==" row."""
+        (phrase,), _ = tb.EXPECT[ident]
+        self.assertTrue(phrase.startswith("== "), ident)
+        return [p.strip() for p in phrase[3:].split(" / ")]
+
+    def test_every_row_is_a_whole_utterance_row(self):
+        rows = self.rows()
+        self.assertEqual(len(rows), 17)
+        for ident, (must, must_not) in rows.items():
+            self.assertEqual(len(must), 1, ident)
+            self.assertTrue(must[0].startswith("== "), ident)
+            self.assertEqual(must_not, [], ident)
+
+    def test_the_committed_transcript_is_still_right(self):
+        found = {}
+        with open(self.TRANSCRIPT) as f:
+            for line in f:
+                m = re.match(r"^\| `(s12-[^`]+)` \| (.*) \|$", line.rstrip("\n"))
+                if m and m.group(1) not in found:
+                    found[m.group(1)] = m.group(2).split(" / ")
+        self.assertEqual(sorted(found), sorted(self.rows()))
+        for ident, fragments in found.items():
+            self.assertEqual(tb.problems(ident, fragments), [], ident)
+
+    def test_each_mutation_of_each_row_is_wrong(self):
+        # Every row, its right reading and four kinds of wrong one. Each
+        # case is named in its message.
+        rows = self.rows()
+        labels = {ident: self.heard(ident)[0] for ident in rows}
+        for ident in rows:
+            right = self.heard(ident)
+            self.assertEqual(tb.problems(ident, right), [], f"{ident}: right")
+            self.assertEqual(tb.problems(ident, right + ["Double-tap to activate"]), [],
+                             f"{ident}: right, with the usage hint")
+            cases = {
+                "duplicated speech": right + right,
+                "an unexpected role": right + ["Button"] if right[-1] != "Button" else right + ["Heading"],
+                "a wrong token": [right[0].replace("3", "4").replace("0", "1").replace("ridge", "ride")
+                                  .replace("guide", "guides").replace("off.", "on.").replace("✦ ✦ ✦", "✦ ✦")
+                                  .replace("❝", "❞").replace("Copy", "Cop").replace("999", "998")] + right[1:],
+                "the usage hint twice": right + ["Double-tap to activate", "Double-tap to activate"],
+            }
+            for other, label in labels.items():
+                if label != right[0]:
+                    cases[f"the sibling label of {other}"] = [label] + right[1:]
+                    cases[f"the sibling label of {other} before its own"] = [label] + right
+            for what, fragments in cases.items():
+                self.assertNotEqual(fragments, right, f"{ident}: {what} is a mutation")
+                self.assertTrue(tb.problems(ident, fragments), f"{ident}: {what}: {fragments}")
+
+    def test_a_switch_row_requires_its_own_hint_and_its_state(self):
+        ident = "s12-good-visibility-show"
+        self.assertEqual(tb.problems(ident, ["off. ", "Show tracking", "Switch", "Double-tap to toggle"]), [])
+        self.assertTrue(tb.problems(ident, ["off. ", "Show tracking", "Switch"]))
+        self.assertTrue(tb.problems(ident, ["on. ", "Show tracking", "Switch", "Double-tap to toggle"]))
+        self.assertTrue(tb.problems(ident, ["checked. off. ", "Show tracking", "Switch", "Double-tap to toggle"]))
 
 
 if __name__ == "__main__":

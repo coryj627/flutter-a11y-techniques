@@ -1,0 +1,122 @@
+// S12 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s12/probe_test.dart.txt): each fixture of
+// lib/probe.dart under flutter test: the semantics tree in traversal order
+// with each node's label, flags, and actions; the Tab stops (the text of
+// the focused widget); for each count of one to four Tabs, from a fresh
+// pump, Enter and then Space, and the taps line after; a tap where the
+// fixture's "Share" text is drawn, from a fresh pump.
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_a11y_techniques/probe.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void log(String s) => debugPrint('S12PROBE $s');
+
+Future<void> open(WidgetTester tester, String id) async {
+  await tester.pumpWidget(const SizedBox());
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: FixtureScreen(id: id),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+SemanticsNode root(WidgetTester tester) =>
+    tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!;
+
+void dump(WidgetTester tester, String id) {
+  void walk(SemanticsNode n, int depth) {
+    final d = n.getSemanticsData();
+    final f = d.flagsCollection;
+    final flags = <String>[
+      if (f.isButton) 'button',
+      if (f.isHidden) 'hidden',
+      'focused=${f.isFocused.name}',
+      'enabled=${f.isEnabled.name}',
+      if (n.isMergedIntoParent) 'merged',
+    ];
+    final actions = [
+      for (final a in SemanticsAction.values)
+        if (d.hasAction(a)) a.name,
+    ];
+    log(
+      '$id tree ${'  ' * depth}#${n.id} label="${d.label.replaceAll('\n', '\\n')}" '
+      'tooltip="${d.tooltip}" flags=$flags actions=$actions id=${d.identifier} rect=${n.rect}',
+    );
+    n.visitChildren((c) {
+      walk(c, depth + 1);
+      return true;
+    });
+  }
+
+  walk(root(tester), 0);
+}
+
+String focused() {
+  final f = FocusManager.instance.primaryFocus;
+  final ctx = f?.context;
+  if (ctx == null) return '(none)';
+  String? text;
+  void visit(Element e) {
+    if (text != null) return;
+    final w = e.widget;
+    if (w is Text) {
+      text = w.data;
+      return;
+    }
+    e.visitChildren(visit);
+  }
+
+  (ctx as Element).visitChildren(visit);
+  return text ?? '(${ctx.widget.runtimeType})';
+}
+
+String taps(WidgetTester tester, String id) {
+  final t = find.textContaining('$id taps');
+  return t.evaluate().isEmpty
+      ? '(gone)'
+      : (tester.widget<Text>(t).data ?? '');
+}
+
+void main() {
+  for (final id in fixtures.keys) {
+    testWidgets('probe $id', (tester) async {
+      final handle = tester.ensureSemantics();
+      await open(tester, id);
+      log('==== $id ${fixtures[id]!.$1}');
+      dump(tester, id);
+      final stops = <String>[];
+      for (var i = 0; i < 5; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        stops.add(focused());
+      }
+      log('$id tab stops: ${stops.join(' -> ')}');
+      for (final key in [LogicalKeyboardKey.enter, LogicalKeyboardKey.space]) {
+        for (var n = 1; n <= 4; n++) {
+          await open(tester, id);
+          for (var i = 0; i < n; i++) {
+            await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+            await tester.pump();
+          }
+          final on = focused();
+          await tester.sendKeyEvent(key);
+          await tester.pumpAndSettle();
+          log('$id $n Tab(s) (on $on) then ${key.keyLabel}: ${taps(tester, id)}');
+        }
+      }
+      final shareText = find.text('$id Share', skipOffstage: false);
+      if (shareText.evaluate().isNotEmpty) {
+        await open(tester, id);
+        final at = tester.getCenter(shareText);
+        await tester.tapAt(at);
+        await tester.pumpAndSettle();
+        log('$id tap at the Share text ($at): ${taps(tester, id)}');
+      }
+      handle.dispose();
+    });
+  }
+}

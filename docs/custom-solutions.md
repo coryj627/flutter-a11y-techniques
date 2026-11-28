@@ -95,13 +95,14 @@ example is added without a decision.
 | [S09 Content grouping](#s09-content-grouping) | 4 | 0 | 1 | 3 |
 | [S10 Content group replacement](#s10-content-group-replacement) | 3 | 0 | 0 | 3 |
 | [S11 Reading and traversal order](#s11-reading-and-traversal-order) | 2 | 0 | 0 | 2 |
+| [S12 Hiding content from AT](#s12-hiding-content-from-at) | 3 | 0 | 0 | 3 |
 | [S13 Roles and traits](#s13-roles-and-traits) | 5 | 4 | 0 | 1 |
 | [S14 Values and state descriptions](#s14-values-and-state-descriptions) | 4 | 2 | 1 | 1 |
 | [S15 Hints](#s15-hints) | 5 | 2 | 0 | 3 |
 | [S22 Semantics identifiers for testing](#s22-semantics-identifiers-for-testing) | 4 | 2 | 2 | 0 |
 | [V13 Minimum touch target size](#v13-minimum-touch-target-size) | 4 | 3 | 0 | 1 |
 | [V14 Focus indicators](#v14-focus-indicators) | 4 | 2 | 0 | 2 |
-| All | 140 | 51 | 13 | 76 |
+| All | 143 | 51 | 13 | 79 |
 
 ## C01 Button
 
@@ -458,6 +459,16 @@ Nothing flagged.
 | --- | --- | --- | --- | --- | --- |
 | `good-columns` | Nothing: `Semantics(container: true, explicitChildNodes: true)` and a `FocusTraversalGroup` round each `Column`, `TextButton`s with a focus outline from their own `style` | `Semantics.container`, `FocusTraversalGroup` | none | R1, R2, R4, R5: iOS Reading Order, Android View Accessibility Reading Order, Android Compose Accessibility Traversal Order, Understanding 1.3.2, Understanding 2.4.3 | not custom |
 | `good-sort-keys` | Nothing: `Semantics(container: true, sortKey: OrdinalSortKey(n))` on every part, as the `sortKey` documentation describes ("the position of this node among its siblings") | `Semantics.sortKey`, `OrdinalSortKey` | A part with no key is not sorted with the others ([FL-340](flutter-limitations.md#fl-340)), filled by giving every part its key | R1, R3, R4, R5: iOS Reading Order, iOS Accessibility Sort Priority, Android Compose Accessibility Traversal Order, Understanding 1.3.2, Understanding 2.4.3 | not custom |
+
+## S12 Hiding content from AT
+
+Nothing flagged.
+
+| Example | What is hand-built | Flutter widget for the pattern | Gap it fills | Source in the spec | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| `good-decoration` | Nothing: `ExcludeSemantics` round each ornament | `ExcludeSemantics` | none | R1, R2: iOS Accessibility Hidden, WAI-ARIA 1.2 aria-hidden | not custom |
+| `good-badge` | Nothing: `ExcludeSemantics` round a `Badge` whose count the text beside it says | `ExcludeSemantics`, `Badge` | none | R1, R2, R3: iOS Accessibility Hidden, WAI-ARIA 1.2 aria-hidden | not custom |
+| `good-visibility` | Nothing: `Visibility(visible:, maintainState: true)` round the panel, shown and hidden by a `SwitchListTile` | `Visibility` | none | R4, R5: HTML Standard hidden, Visibility documentation | not custom |
 
 ## S13 Roles and traits
 

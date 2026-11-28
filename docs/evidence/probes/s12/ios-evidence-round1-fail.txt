@@ -1,0 +1,11 @@
+S12 evidence run 1 (2026-11-27), iOS tree layer: the test results and the failure, from build/evidence/S12/ios.log. testGoodVisibilityTheKeyboardReachesCopyOnlyOnceItIsShown then expected the count to stay at 0 after three Tabs and Return with the panel hidden; the third Tab was on Back and Return left the screen, so the count was gone (the probe's p07 had shown the same). The test now asserts that the screen closes.
+Test Case '-[RunnerUITests.S12HidingContentUITests testBadDecorationReadHasEachOrnamentAsAnElement]' passed (6.071 seconds).
+Test Case '-[RunnerUITests.S12HidingContentUITests testBadHiddenControlATapWhereShareIsDrawnShares]' passed (6.926 seconds).
+Test Case '-[RunnerUITests.S12HidingContentUITests testBadHiddenControlHasNoShareAndTheKeyboardRunsIt]' passed (30.453 seconds).
+Test Case '-[RunnerUITests.S12HidingContentUITests testBadMaintainHiddenHasThePanelElementsAndTheKeyboardCopies]' passed (15.625 seconds).
+Test Case '-[RunnerUITests.S12HidingContentUITests testBadOpacityHiddenHasNoPanelElementAndTheKeyboardAndATapCopy]' passed (31.274 seconds).
+Test Case '-[RunnerUITests.S12HidingContentUITests testGoodBadgeHasTheWordsAloneAndNoElement3]' passed (5.875 seconds).
+Test Case '-[RunnerUITests.S12HidingContentUITests testGoodDecorationHasTheQuoteAndItsSourceAndNoOrnament]' passed (5.816 seconds).
+Test Case '-[RunnerUITests.S12HidingContentUITests testGoodVisibilityHiddenHasNoPanelElementShownHasIt]' passed (6.414 seconds).
+/Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-acdbf96561dbe5eb3/ios/RunnerUITests/S12HidingContentUITests.swift:130: error: -[RunnerUITests.S12HidingContentUITests testGoodVisibilityTheKeyboardReachesCopyOnlyOnceItIsShown] : Failed to get matching snapshot: No matches found for Elements matching predicate '"s12-good-visibility-count" IN identifiers' from input {(
+Test Case '-[RunnerUITests.S12HidingContentUITests testGoodVisibilityTheKeyboardReachesCopyOnlyOnceItIsShown]' failed (14.416 seconds).

@@ -1,0 +1,62 @@
+device: Android 17; Physical size: 1080x2424; Physical density: 420
+s12-p01-node0 is "p01 Note" android.view.View
+s12-p01-node1 is "p01 Share" android.widget.Button
+s12-p01-node2 is "p01 After" android.widget.Button
+s12-p02-node0 is "p02 After" android.widget.Button
+s12-p03-node0 is "p03 After" android.widget.Button
+s12-p04-node0 is "p04 Replacement" android.view.View
+s12-p04-node1 is "p04 After" android.widget.Button
+s12-p05-node0 is "p05 After" android.widget.Button
+s12-p06-node0 is "p06 After" android.widget.Button
+s12-p07-node0 is "p07 After" android.widget.Button
+s12-p08-node0 is "p08 After" android.widget.Button
+s12-p09-node0 is "p09 Share" android.widget.Button
+s12-p09-node1 is "p09 After" android.widget.Button
+s12-p10-node0 is "p10 After" android.widget.Button
+s12-p11-node0 is "p11 Share" android.widget.Button
+s12-p11-node1 is "p11 After" android.widget.Button
+s12-p12-node0 is "p12 After" android.widget.Button
+s12-p13-node0 is "p13 After" android.widget.Button
+s12-p14-node0 is "p14 Share" android.widget.Button
+s12-p14-node1 is "p14 After" android.widget.Button
+s12-p15-node0 is "p15 After" android.widget.Button
+s12-p16-node0 is "p16 Share" android.widget.Button
+s12-p16-node1 is "p16 After" android.widget.Button
+s12-p17-node0 is "p17 Share" android.widget.Button
+s12-p17-node1 is "p17 After" android.widget.Button
+s12-p18-node0 is "p18 After" android.widget.Button
+s12-p19-node0 is "p19 Share" android.widget.Button
+s12-p19-node1 is "p19 After" android.widget.Button
+s12-p20-node0 is "p20 After" android.widget.Button
+s12-p21-node0 is "p21 After" android.widget.Button
+s12-p22-node0 is "p22 After" android.widget.Button
+s12-p23-node0 is "p23 Banner" android.view.View
+s12-p23-node1 is "p23 After" android.widget.Button
+p24: TalkBack focus on Before refused
+s12-p24-node0 is "Back" android.widget.Button
+s12-p24-node1 is "Probe p24" android.view.View
+s12-p24-node2 is "p24 Banner" android.view.View
+s12-p24-node3 is "p24 After" android.widget.Button
+s12-p25-node0 is "❝ p25 Quote" android.view.View
+s12-p25-node1 is "· · ·" android.view.View
+s12-p25-node2 is "✦ ✦ ✦" android.view.View
+s12-p25-node3 is "p25 After" android.widget.Button
+s12-p26-node0 is "p26 Quote" android.view.View
+s12-p26-node1 is "p26 After" android.widget.Button
+s12-p27-node0 is "3" android.view.View
+s12-p27-node1 is "p27 Inbox, 3 unread" android.view.View
+s12-p27-node2 is "p27 After" android.widget.Button
+s12-p28-node0 is "p28 Inbox, 3 unread" android.view.View
+s12-p28-node1 is "p28 After" android.widget.Button
+s12-p29-node0 is "p29 Pane one" android.view.View
+s12-p29-node1 is "p29 After" android.widget.Button
+s12-p30-node0 is "p30 Full text" android.view.View
+s12-p30-node1 is "p30 After" android.widget.Button
+s12-p31-node0 is "p31 Share" android.view.View
+s12-p31-node1 is "p31 After" android.widget.Button
+s12-p32-node0 is "p32 Share" android.view.View
+s12-p32-node1 is "p32 After" android.widget.Button
+s12-p33-node0 is "p33 $30" android.view.View
+s12-p33-node1 is "p33 Now $24" android.view.View
+s12-p33-node2 is "p33 After" android.widget.Button
+s12-p34-node0 is "p34 After" android.widget.Button

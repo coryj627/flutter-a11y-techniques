@@ -1,0 +1,39 @@
+html after Tab 1, DOM focus on #b-plain; the tree's buttons and focused nodes:
+html    role=RootWebArea name="S12 HTML comparison" focusable:true,focused:true
+html    role=button name="h01 Plain button" focusable:true,focused:true
+html    role=button name="h05 Button at opacity 0" focusable:true
+html    role=button name="h09 After" focusable:true
+html after Tab 2, DOM focus on #b-aria-hidden; the tree's buttons and focused nodes:
+html    role=RootWebArea name="S12 HTML comparison" focusable:true,focused:true
+html    role=button name="h01 Plain button" focusable:true
+html    role=button name="h05 Button at opacity 0" focusable:true
+html    role=button name="h09 After" focusable:true
+html    role=button name="h02 Button in aria-hidden" focusable:true,focused:true
+html after Tab 3, DOM focus on #b-opacity; the tree's buttons and focused nodes:
+html    role=RootWebArea name="S12 HTML comparison" focusable:true,focused:true
+html    role=button name="h01 Plain button" focusable:true
+html    role=button name="h05 Button at opacity 0" focusable:true,focused:true
+html    role=button name="h09 After" focusable:true
+html    role=button name="h02 Button in aria-hidden" focusable:true
+html after Tab 4, DOM focus on #b-after; the tree's buttons and focused nodes:
+html    role=RootWebArea name="S12 HTML comparison" focusable:true,focused:true
+html    role=button name="h01 Plain button" focusable:true
+html    role=button name="h05 Button at opacity 0" focusable:true
+html    role=button name="h09 After" focusable:true,focused:true
+html    role=button name="h02 Button in aria-hidden" focusable:true
+p03 after Tab 1, DOM focus on FLT-SEMANTICS[role=button] "Back"; the tree's buttons and focused nodes:
+p03    role=RootWebArea name="" focusable:true,focused:true
+p03    role=button name="Back" focusable:true,focused:true
+p03    role=button name="p03 After" focusable:true
+p03 after Tab 2, DOM focus on FLT-SEMANTICS[role=button] "Back"; the tree's buttons and focused nodes:
+p03    role=RootWebArea name="" focusable:true,focused:true
+p03    role=button name="Back" focusable:true,focused:true
+p03    role=button name="p03 After" focusable:true
+p13 after Tab 1, DOM focus on FLT-SEMANTICS[role=button] "Back"; the tree's buttons and focused nodes:
+p13    role=RootWebArea name="" focusable:true,focused:true
+p13    role=button name="Back" focusable:true,focused:true
+p13    role=button name="p13 After" focusable:true
+p13 after Tab 2, DOM focus on FLT-SEMANTICS[role=button] "Back"; the tree's buttons and focused nodes:
+p13    role=RootWebArea name="" focusable:true,focused:true
+p13    role=button name="Back" focusable:true,focused:true
+p13    role=button name="p13 After" focusable:true

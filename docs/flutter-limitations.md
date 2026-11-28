@@ -177,6 +177,8 @@ yet), **Fixed in x.y** (verified on that version).
 | [FL-331](#fl-331) | A change of a node's identifier alone is not sent to the platform: the node keeps the identifier it had | All (source read); the web measured | Confirmed (source read) |
 | [FL-340](#fl-340) | A node with no sort key keeps its place by position and splits the keyed nodes round it into runs that are sorted apart | All | Confirmed |
 | [FL-341](#fl-341) | A sort key inside `MergeSemantics` does not order the merged node | All | Confirmed |
+| [FL-350](#fl-350) | A control hidden from the semantics tree keeps keyboard focus, and Enter and Space run it, with no node focused: `ExcludeSemantics`, `Semantics(excludeSemantics: true)`, `Opacity` at 0, `BlockSemantics`, and the deprecated `ignoringSemantics`; on the web the page's focus stays on the element before it | All | Confirmed |
+| [FL-351](#fl-351) | `Semantics(hidden: true)` hides a node and everything under it on Android, only the node itself from VoiceOver's moving forward on iOS, and nothing on the web | All | Observed |
 | **FL-400 to FL-499** | Wave 4, focus and keyboard | | |
 | [FL-400](#fl-400) | A `CupertinoListTile` with `onTap` takes no keyboard focus, and is not a button on Android and iOS | All (no focus); Android, iOS (no role) | Confirmed |
 | [FL-401](#fl-401) | An `InkWell` with `onTap` is not a button on Android and iOS | Android, iOS | Confirmed |
@@ -4039,6 +4041,23 @@ yet), **Fixed in x.y** (verified on that version).
   all, as C05's good examples do (`if (open) panel`; a custom solution, not vetted by a real-world
   example: C05's spec, "Custom solutions"). Keeping a hidden panel's state while taking its controls
   out of the focus order, for example with `ExcludeFocus`, was not tried.
+- Seen again in the S12 probe (2026-11-27, `docs/evidence/probes/s12/`):
+  `Offstage(offstage: true)` round a `TextButton` (p05), and
+  `Visibility(visible: false, maintainState: true, maintainFocusability:
+  true)`, which hides its child with an `Offstage` and leaves out the
+  `ExcludeFocus` it would otherwise add (p12; `widgets/indexed_stack.dart`,
+  source read). On the web, Android 17, and iOS 27.0, and in the widget
+  tests: no node; the second Tab put keyboard focus on the button, and
+  Enter, and Space where sent (p05), ran it; on the web DOM focus stayed on
+  Back and on Android the node reported as focused stayed Back
+  (`web.txt`, `android-tree.txt`, `ios.txt`, `flutter_test.txt`). A tap where
+  the button would be ran nothing: an `Offstage` child takes no space, and
+  the next control moved up. The S12 probe also measured the workaround
+  this entry did not try: `Visibility(visible: false, maintainState: true)`
+  keeps the state and puts the child in an `ExcludeFocus`, and on every
+  platform the keyboard did not reach the button (p07); `IndexedStack`
+  does the same for its children not shown (p29). S12 `good-visibility`
+  uses it. [FL-350](#fl-350) is the same for the other ways to hide.
 - Upstream issue: not searched yet (D25).
 
 ## FL-264
@@ -5464,6 +5483,127 @@ yet), **Fixed in x.y** (verified on that version).
   `ListTile`'s title, or inside a wrapper that merges, is silently lost.
 - Workaround, in the SDK: put the key on a `Semantics(container: true)`
   outside the merging widget (S11 `good-sort-keys`).
+- Upstream issue: not searched yet (D25).
+
+## FL-350
+
+**A control hidden from the semantics tree keeps keyboard focus, and Enter and Space run it, with no node focused: `ExcludeSemantics`, `Semantics(excludeSemantics: true)`, `Opacity` at 0, `BlockSemantics`, and the deprecated `ignoringSemantics`; on the web the page's focus stays on the element before it.**
+
+- Status: Confirmed, Flutter 3.47.5, in widget tests, on the web
+  (Chromium), on Android 17, and on iOS 27.0. Found in the S12 probe
+  (`docs/evidence/probes/s12/`, fixtures p03, p04, p13, p15, p18, p23,
+  p24; `flutter_test.txt`, `web.txt`, `web-round2.txt`, `android-tree.txt`,
+  `ios.txt`); seen first in the S10 probe (p13, a replaced composite that
+  took in a button; `docs/evidence/probes/s10/`), and asserted there by S10
+  `bad-hides-control` (its spec, section 9, hands the finding to S12).
+  Asserted by S12
+  `bad-hidden-control` (`ExcludeSemantics`) and `bad-opacity` (`Opacity`)
+  in the widget, web, Android, and iOS tests, written to fail if the
+  hidden control leaves the keyboard's order or gets a node. Framework
+  source read: `ExcludeSemantics`, `BlockSemantics`, and `RenderOpacity`
+  (at alpha 0, unless `alwaysIncludeSemantics`) drop semantics and do
+  nothing to focus; `ExcludeSemantics`'s documentation says nothing of
+  focus. `Offstage` does the same, which is [FL-263](#fl-263).
+- What happens, for a `TextButton` inside each (the probe's "Share"):
+  - Widget tests: no semantics node for the button; Tab gives it keyboard
+    focus, with no node focused, and Enter runs it; so does Space, which
+    the probe sent for p03 and p13 (and every S12 test of the two
+    examples sends).
+  - Web: no element for it. The Tab that gives it Flutter's focus leaves
+    the page's focus where it was, on Back: Chromium's tree has Back
+    focused and no element for the button (`web-round2.txt`, p03 and
+    p13), and Enter (or Space, p03 and p13) then runs the hidden button,
+    not Back.
+  - Android: no node for it; the node reported as focused stays Back, and
+    Enter (or Space, p03 and p13) runs the hidden button.
+  - iOS: no element for it; two Tabs (the first is on Back) and Return
+    (or Space, p03 and p13) run it.
+  - With TalkBack on (Android, the probe's round 2,
+    `android-talkback-keys.md`; p03, p13, and p05 for `Offstage`): the Tab
+    that gives the hidden button focus is not spoken at all, the Tab
+    before it read Back and the Tab after it the next button, and input
+    focus stays reported on Back. Probe only; not asserted by a test.
+    What VoiceOver says then, on iOS or the web, was not measured.
+  - A tap where it is laid out runs it on every platform, drawn or not
+    (p03, p04, p13, p15, p23); p18, an `IgnorePointer`, took no tap in the
+    widget tests, on the web, and on iOS (on Android the probe made none),
+    and p24's tap was not made on the devices (its "Before" line, which the
+    tap was placed by, was blocked too).
+- In plain HTML, the same markup with `aria-hidden="true"` round a button
+  is the same mistake (Using ARIA's fourth rule), but WAI-ARIA 1.2, 7.2,
+  has the browser expose "Elements that are currently focused, even if
+  the element or one of its ancestor elements has its aria-hidden
+  attribute set to true": measured in Chromium, the button is in the tree,
+  focused, with its role and name, while it has DOM focus
+  (`web-round2.txt`, `html.html.txt`). Flutter has no node to expose.
+- What does not do this: `Visibility(visible: false)`, with or without
+  `maintainState`, `maintainAnimation`, `maintainSize`,
+  `maintainSemantics`, or `maintainInteractivity`, puts its hidden child in
+  an `ExcludeFocus` (its documentation, and the source); `ExcludeFocus`
+  itself; `IndexedStack`'s children not shown. The keyboard did not reach
+  the button in any of them: on all four for p07, p09, p10, p19, p20, and
+  p29; in the widget tests and on the web for p06 and p08, where the
+  probe sent no key on the devices.
+- WCAG, as written: 4.1.2 Name, Role, Value fails: a control that the
+  keyboard reaches and operates has no name or role that can be
+  determined. 2.1.1 is not failed. For `Opacity` at 0, 2.4.7 Focus Visible
+  fails as well: with focus on the hidden button nothing on the screen
+  changes (S12's widget test compares the pixels; not measured on a
+  device). S12's spec, section 3, gives each example's verdict.
+- Workaround, in the SDK: hide no control. To hide something from
+  everyone, use `Visibility(visible: false)`, which takes it out of the
+  keyboard's order too (S12 `good-visibility`). To hide from the screen
+  reader only, hide only what has no control in it (S12 `good-decoration`
+  and `good-badge`); where a control must be kept out of both,
+  `ExcludeSemantics` round `ExcludeFocus` does it (p20), and a pointer
+  still reaches it, as HTML's `inert` would not allow; no example uses
+  that.
+- How to read this entry: Flutter has not added a way to tell a screen
+  reader about a focused control it has hidden, as browsers do for
+  `aria-hidden`, nor a widget that hides from the screen reader, the
+  keyboard, and the pointer at once while still drawing, as HTML's
+  `inert` does.
+- Upstream issue: not searched yet (D25).
+
+## FL-351
+
+**`Semantics(hidden: true)` hides a node and everything under it on Android, only the node itself from VoiceOver's moving forward on iOS, and nothing on the web.**
+
+- Status: Observed, Flutter 3.47.5, in the S12 probe only
+  (`docs/evidence/probes/s12/`, fixtures p21, a note in
+  `Semantics(hidden: true)`, and p22, a `TextButton` in it): widget tests
+  (`flutter_test.txt`), the web in Chromium (`web.txt`), Android 17
+  (`android-tree.txt`), and iOS 27.0 (`ios.txt`). No S12 example uses it,
+  so no test in the repo asserts it. SDK read: `Semantics.hidden`'s
+  documentation says hidden elements "cannot gain accessibility focus
+  though regular touch. The only way they can be focused is by moving the
+  focus to them via linear navigation. Platforms are free to completely
+  ignore hidden elements ... Instead of marking an element as hidden it
+  should usually be excluded from the semantics tree altogether. Hidden
+  elements are only included in the semantics tree to work around platform
+  limitations and they are mainly used to implement accessibility scrolling
+  on iOS."
+- What happens:
+  - Widget tests: the node is in the tree with the hidden flag (p21's
+    labelled "p21 Note"; p22's with no label, holding the button, which has
+    no hidden flag of its own and keeps its tap action).
+  - Web: nothing is hidden. p21's note is an element holding its text, in
+    Chromium's tree; p22's button is a `role="button"` element in a plain
+    element, Tab gives it DOM focus, and Enter and Space run it. No
+    `aria-hidden` or `hidden` is written.
+  - Android: the node and everything under it are left out of the tree:
+    neither "p21 Note" nor "p22 Share" is a node. p22's button still
+    takes keyboard focus, with the app's root view reported as focused,
+    and Enter and Space run it, as in [FL-350](#fl-350).
+  - iOS: both are in the XCUITest tree, the note as static text and the
+    button as a button. VoiceOver, moving forward, passed over "p21 Note"
+    and read "p22 Share Button": it skipped the flagged node itself, and
+    not what is under it. Touch and the rotor were not tried.
+- WCAG: none claimed; no example uses it, and the documentation does not
+  offer it for hiding content.
+- Workaround: none needed for hiding: `ExcludeSemantics` hides the same on
+  every platform (S12 `good-decoration`, `good-badge`). The entry records
+  that `hidden` is not a way to hide, though its name suggests one.
 - Upstream issue: not searched yet (D25).
 
 <!-- FL-400 to FL-499: Wave 4, focus and keyboard. Entries in this range go below, in id order. -->
