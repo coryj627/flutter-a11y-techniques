@@ -21,6 +21,7 @@ import {
   BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, collectWalk, endRow, helpRole, judgeCollectedWalk, judgeExampleWalk, startRow,
   judgeTranscript, runWalks, screenStops, spokenRole, transcriptRow, unresolvedRow,
 } from './vo/v12_vo_walks.js';
+import { voiceOverRunning, withVoiceOverState } from './vo/v12_vo_state.js';
 
 const exampleHeading = (page) => page.getByRole('heading', { name: 'Example', exact: true, level: 2 });
 const { open } = technique('V12', { ready: exampleHeading, settle: 600 });
@@ -843,5 +844,124 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
     // Never skipped: a missing file fails here. Recorded 2026-11-28.
     const text = readFileSync(new URL('../docs/evidence/V12/voiceover-web.md', import.meta.url), 'utf8');
     expect(judgeTranscript(text)).toEqual([]);
+  });
+});
+
+// The web VoiceOver fixture's keeping of the Mac's VoiceOver state
+// (withVoiceOverState in web_tests/vo/v12_vo_state.js), on doubles: a
+// made-up VoiceOver whose process state is a variable, and whose start,
+// stop, restart and quit do what each case says. No VoiceOver is started.
+test.describe('the web VoiceOver fixture puts the Mac\'s VoiceOver back as it found it, and fails if it cannot', () => {
+  /** A made-up Mac: `on` is whether a VoiceOver process is running. */
+  function mac({ on, startFails = false, walkFails = false, stopFails = false, stopLeavesOn = false,
+    stopRestoresUser = true, restartFails = false, quitFails = false, readFails = false } = {}) {
+    const m = { on, calls: [], lines: [] };
+    let userQuit = false;
+    m.isRunning = () => {
+      if (readFails) throw new Error("VoiceOver's state could not be read (pgrep -x VoiceOver: 2)");
+      return m.on;
+    };
+    m.start = async () => {
+      m.calls.push('start');
+      if (startFails) throw new Error('start failed');
+      if (m.on) userQuit = true; // as Guidepup quits the user's own VoiceOver
+      m.on = true;
+    };
+    m.use = async () => {
+      m.calls.push('walk');
+      if (walkFails) throw new Error('the walk read a wrong stop');
+    };
+    m.stop = async () => {
+      m.calls.push('stop');
+      if (stopFails) throw new Error('stop failed');
+      if (!stopLeavesOn) m.on = userQuit && stopRestoresUser;
+    };
+    m.restart = async () => { m.calls.push('restart'); if (restartFails) throw new Error('restart failed'); m.on = true; };
+    m.quit = async () => { m.calls.push('quit'); if (!quitFails) m.on = false; };
+    m.run = () => withVoiceOverState({
+      isRunning: m.isRunning, start: m.start, use: m.use, stop: m.stop, restart: m.restart, quit: m.quit,
+      wait: async () => m.isRunning(), log: (l) => m.lines.push(l),
+    });
+    return m;
+  }
+
+  test('found off, a walk that passed: off again, no error', async () => {
+    const m = mac({ on: false });
+    expect(await m.run()).toBe(false);
+    expect(m.on).toBe(false);
+    expect(m.calls).toEqual(['start', 'walk', 'stop']);
+    expect(m.lines).toEqual(['found off', 'left off']);
+  });
+
+  test('found on, Guidepup restoring it: on again, nothing more done', async () => {
+    const m = mac({ on: true });
+    expect(await m.run()).toBe(true);
+    expect(m.on).toBe(true);
+    expect(m.calls).toEqual(['start', 'walk', 'stop']);
+  });
+
+  test('found on, Guidepup not restoring it: restarted here, and on again', async () => {
+    const m = mac({ on: true, stopRestoresUser: false });
+    expect(await m.run()).toBe(true);
+    expect(m.on).toBe(true);
+    expect(m.calls).toEqual(['start', 'walk', 'stop', 'restart']);
+  });
+
+  test('a failed walk: VoiceOver still put back, and the walk\'s error reported', async () => {
+    const m = mac({ on: false, walkFails: true });
+    await expect(m.run()).rejects.toThrow(/the walk: the walk read a wrong stop/);
+    expect(m.on).toBe(false);
+  });
+
+  test('a failed stop fails the test, even with VoiceOver then put back', async () => {
+    const m = mac({ on: false, stopFails: true });
+    await expect(m.run()).rejects.toThrow(/VoiceOver's stop failed: stop failed/);
+    expect(m.calls).toEqual(['start', 'walk', 'stop', 'quit']);
+    expect(m.on).toBe(false);
+  });
+
+  test('a stop that leaves VoiceOver on is put right by a quit, and passes', async () => {
+    const m = mac({ on: false, stopLeavesOn: true });
+    expect(await m.run()).toBe(false);
+    expect(m.calls).toEqual(['start', 'walk', 'stop', 'quit']);
+  });
+
+  test('a failed restore fails the test: found on and not restarted, or found off and not quit', async () => {
+    const on = mac({ on: true, stopRestoresUser: false, restartFails: true });
+    await expect(on.run()).rejects.toThrow(/VoiceOver not put back on: restart failed/);
+    const off = mac({ on: false, stopLeavesOn: true, quitFails: true });
+    await expect(off.run()).rejects.toThrow(/VoiceOver not put back: found off, left on/);
+  });
+
+  test('a failed walk and a failed stop and restore are all reported', async () => {
+    const m = mac({ on: false, walkFails: true, stopFails: true, quitFails: true });
+    await expect(m.run()).rejects.toThrow(
+      /the walk: the walk read a wrong stop; VoiceOver's stop failed: stop failed; VoiceOver not put back: found off, left on/);
+  });
+
+  test('a failed start is reported, and VoiceOver is still read and left as found', async () => {
+    const m = mac({ on: false, startFails: true });
+    await expect(m.run()).rejects.toThrow(/the walk: start failed/);
+    expect(m.calls).toEqual(['start', 'stop']);
+    expect(m.on).toBe(false);
+  });
+
+  test('a state that cannot be read fails before VoiceOver is started', async () => {
+    const m = mac({ on: false, readFails: true });
+    await expect(m.run()).rejects.toThrow(/could not be read/);
+    expect(m.calls).toEqual([]);
+  });
+
+  test('the independent read is pgrep -x VoiceOver: running, not running, and no answer', () => {
+    const calls = [];
+    const exec = (status) => (file, args) => {
+      calls.push([file, ...args].join(' '));
+      if (status === 0) return '';
+      const e = new Error('exit'); e.status = status; throw e;
+    };
+    expect(voiceOverRunning(exec(0))).toBe(true);
+    expect(voiceOverRunning(exec(1))).toBe(false);
+    expect(() => voiceOverRunning(exec(2))).toThrow(/could not be read/);
+    expect(calls[0]).toBe('/usr/bin/pgrep -x VoiceOver');
   });
 });

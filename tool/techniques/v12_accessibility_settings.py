@@ -91,5 +91,8 @@ VOICEOVER_WEB_METHOD = (
     "read as an empty phrase, is walked again, up to three walks, each its own row "
     "(`-walk-<n>`), and it never passes. VoiceOver's own help message (\"You are currently on "
     "...\") is left out only at the position of the stop before it, whose reading speaks the role "
-    "the help names. No runner retries"
+    "the help names. No runner retries. The Mac's VoiceOver state is read with `pgrep -x VoiceOver` "
+    "before each test starts VoiceOver and again after Guidepup stops it, put back if it differs, "
+    "and read again; a failed stop or restore fails the test (V12's own fixture, "
+    "web_tests/vo/v12_vo_state.js)"
 )

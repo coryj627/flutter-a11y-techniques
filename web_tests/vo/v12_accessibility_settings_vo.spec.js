@@ -32,13 +32,46 @@
 // which this config does not change), not the Mac's: this Mac's appearance
 // was Dark during the recording, and every walk read "Dark mode: off".
 // Each test opens its example in a page of its own, from a fresh load.
-import { voiceOverTest as test } from '@guidepup/playwright';
-import { expect } from '@playwright/test';
+// V12 does not use Guidepup's `voiceOverTest` fixture as it is: it swallows a
+// failed `stop()`. This fixture does what that one does (the same start
+// options, the same `navigateToWebContent`, from @guidepup/playwright's
+// lib/voiceOverTest.js, read) inside withVoiceOverState (v12_vo_state.js),
+// which reads the Mac's VoiceOver state with `pgrep -x VoiceOver` before it
+// starts, puts that state back after the walk and Guidepup's stop (Guidepup's
+// own restart of the user's VoiceOver if it was on, `killall VoiceOver` if it
+// was off), reads it again the same way, and fails the test on a failed
+// start, stop, or restore, Playwright keeping the walk's own failure beside
+// it. Each state is logged on a `V12VOSTATE` line.
+import { test as base, expect } from '@playwright/test';
+import { voiceOver as guidepupVoiceOver } from '@guidepup/guidepup';
+import applicationIds from '@guidepup/playwright/lib/applicationIdMap.js';
+import navigation from '@guidepup/playwright/lib/navigateVoiceOverToWebContent.js';
+import userVoiceOver from '@guidepup/guidepup/lib/macOS/VoiceOver/startUserVoiceOver.js';
+import { quitVoiceOver, voiceOverRunning, withVoiceOverState } from './v12_vo_state.js';
 import { VO_HELP, cursorBounds, lastPhrase, phraseForMove, walkToEnd } from './vo_helpers.js';
 import {
   EMPTY_STOP, EXPECTED_STOPS, NO_STOPS, collectWalk, judgeCollectedWalk, runWalks, screenStops, startText,
   unresolvedText, witnessText,
 } from './v12_vo_walks.js';
+
+const test = base.extend({
+  voiceOver: async ({ browserName, page }, use, testInfo) => {
+    const applicationId = applicationIds.applicationIdMap[browserName];
+    if (!applicationId) throw new Error(`Browser ${browserName} is not recognised.`);
+    guidepupVoiceOver.navigateToWebContent = ({ capture } = {}) => navigation.navigateVoiceOverToWebContent({
+      voiceOver: guidepupVoiceOver, page, applicationId, capture,
+    });
+    await withVoiceOverState({
+      isRunning: () => voiceOverRunning(),
+      start: () => guidepupVoiceOver.start({ capture: 'initial' }),
+      use: () => use(guidepupVoiceOver),
+      stop: () => guidepupVoiceOver.stop(),
+      restart: () => userVoiceOver.startUserVoiceOver(),
+      quit: () => quitVoiceOver(),
+      log: (line) => console.log(`V12VOSTATE ${browserName} ${testInfo.title} | ${line}`),
+    });
+  },
+});
 
 test.describe.configure({ retries: 0 });
 
