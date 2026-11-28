@@ -5,6 +5,7 @@
 import { test, expect } from '@playwright/test';
 import { byId, technique } from './support/techniques.js';
 import { readFileSync } from 'node:fs';
+import { VO_HELP, phraseForMove } from './vo/vo_logic.js';
 import {
   BROWSERS, EXAMPLE_HEADING, EXAMPLE_SCREENS, EXPECTED_STOPS, TRANSCRIPT_ROWS, collectWalk, endRow, expectedStops,
   helpRole, judgeCollectedWalk, judgeExampleWalk, judgeTranscript, judgeWalk, ordersRead, positionsRow, runWalks,
@@ -354,6 +355,7 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
   // that reading (helpAfterStop in s08_vo_walks.js). Tested only on these
   // made-up walks: no S08 recording has had a help message with positions.
   const TEXT_FIELD_HELP = 'You are currently on a text field, inside of web content.';
+  const IN_HELP = 'You are currently in a empty group.';
   const BUTTON_HELP = 'You are currently on a button, inside of web content. To click this button, press Control-Option-Space.';
   // One position per stop, each new but where `same` lists the stops (by
   // index) that are at the position of the stop before them.
@@ -383,6 +385,17 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     // The role is the spoken role, never a word of the name.
     ['list help after the "Bulleted list" heading, at its position: fails',
       [own[0], HELP, ...whole.slice(1)], at([own[0], HELP, ...whole.slice(1)], [1]), 'wrong'],
+    // VoiceOver's other wording, as round 9 read it (VO_HELP; helpRole
+    // takes "empty group" as a group).
+    ['"in a empty group" help after an item, at its position: left out',
+      screen('list 3 items', milk, IN_HELP, eggs, bread, 'end of list'),
+      at(screen('list 3 items', milk, IN_HELP, eggs, bread, 'end of list'), [own.length + 3]), 'complete'],
+    ['"in a empty group" help after "list 3 items", at its position: fails',
+      screen('list 3 items', IN_HELP, milk, eggs, bread, 'end of list'),
+      at(screen('list 3 items', IN_HELP, milk, eggs, bread, 'end of list'), [own.length + 2]), 'wrong'],
+    ['"in a empty group" help at a new position: fails',
+      screen('list 3 items', milk, IN_HELP, eggs, bread, 'end of list'),
+      at(screen('list 3 items', milk, IN_HELP, eggs, bread, 'end of list')), 'wrong'],
     ['button help after a text with no role, at its position: fails',
       [...whole, BUTTON_HELP], at([...whole, BUTTON_HELP], [n]), 'wrong'],
   ];
@@ -407,6 +420,9 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     expect(helpRole(HELP)).toBe('list');
     expect(helpRole(TEXT_FIELD_HELP)).toBe('text field');
     expect(helpRole(BUTTON_HELP)).toBe('button');
+    // VoiceOver's other wording (S08's ninth web recording).
+    expect(helpRole('You are currently in a empty group.')).toBe('group');
+    expect(helpRole('You are currently in a list, inside of web content.')).toBe('list');
     expect(helpRole('end of list')).toBe(null);
   });
 });
@@ -425,7 +441,7 @@ const TIED = {
   help: 'You are currently on a list, inside of web content. To move between items in this list, press '
     + 'Control-Option-Right Arrow or Control-Option-Left Arrow. To exit this web area, press Control-Option-Shift-Up Arrow.',
 };
-const VO_HELP_PREFIX = /^You are currently on /;
+const VO_HELP_PREFIX = /^You are currently (?:on|in) /;
 
 // How the walks are made again (runWalks), judged by judgeWalk as the
 // VoiceOver spec's walks are, and the screens and lists every judge reads.
@@ -948,6 +964,30 @@ test.describe('the web VoiceOver transcript is judged again from what it recorde
         expect(ordersRead('bad-lazy-list', b, stops), `${file} ${b}`).toBe(reached[b]);
       }
     }
+  });
+
+  test('round 9\'s three failed end witnesses read only the help text: the kept transcript cannot show what the walk would capture there now', () => {
+    // The end row keeps one phrase for each move of the witness, the one the
+    // capture gave. With VO_HELP matching "You are currently in", today's
+    // capture puts the phrase Guidepup logged for the move in place of the
+    // help text (phraseForMove); that logged phrase was not recorded, so
+    // whether the witness would now read the item, and pass, is not known.
+    const text = readFileSync(new URL('../docs/evidence/probes/s08/voiceover-web-round9-fail.md.txt', import.meta.url), 'utf8');
+    let browser = null;
+    const helped = [];
+    for (const line of text.split('\n')) {
+      browser = /^## (\S+)$/.exec(line)?.[1] ?? browser;
+      const m = /^\| `([a-z-]+)-walk-1-end` \| back "(.*)" at (.*) \/ forward "(.*)" at (.*) \|$/.exec(line);
+      if (m && VO_HELP.test(m[2])) helped.push(`${browser} ${m[1]}: ${m[2]}`);
+    }
+    expect(helped).toEqual([
+      'chromium good-bulleted: You are currently in a empty group.',
+      'chromium good-numbered: You are currently in a empty group.',
+      'webkit good-bulleted: You are currently in a empty group.',
+    ]);
+    // Today's capture would not keep the help text; what it would keep is
+    // the logged phrase, whatever that was.
+    expect(phraseForMove('You are currently in a empty group.', 'logged')).toBe('logged');
   });
 
   test('the committed recording (docs/evidence/S08/voiceover-web.md) is right, every browser and row once', () => {

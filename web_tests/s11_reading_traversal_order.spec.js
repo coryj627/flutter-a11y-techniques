@@ -377,6 +377,9 @@ test.describe('the VoiceOver example walks are judged on every walk', () => {
     for (const [reading, role] of roles) expect(spokenRole(reading), reading).toBe(role);
     expect(helpRole(HELP)).toBe('heading level 3');
     expect(helpRole(BUTTON_HELP)).toBe('button');
+    // VoiceOver's other wording (S08's ninth web recording).
+    expect(helpRole('You are currently in a empty group.')).toBe('group');
+    expect(helpRole('You are currently in a list, inside of web content.')).toBe('list');
     expect(helpRole(TEXT_FIELD_HELP)).toBe('text field');
     expect(helpRole('Save list button')).toBe(null);
   });
@@ -395,7 +398,7 @@ const TIED = {
   after: screenStops('good-columns').length + 5,
   help: 'You are currently on a button, inside of web content. To click this button, press Control-Option-Space.',
 };
-const VO_HELP_PREFIX = /^You are currently on /;
+const VO_HELP_PREFIX = /^You are currently (?:on|in) /;
 
 // How the walks are made again (runWalks), judged by judgeWalk as the
 // VoiceOver spec's walks are, and the screens and lists every judge reads.

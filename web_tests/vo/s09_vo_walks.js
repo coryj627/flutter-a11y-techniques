@@ -88,10 +88,16 @@ export const EXPECTED_STOPS = {
   'bad-merged-group': [`${GROUP} On Off button`, 'Light: not set'],
 };
 
-/** The role a help message names: "group" for "You are currently on a group, …". */
+/**
+ * The role a help message names: "group" for "You are currently on a group, …".
+ * Both of VoiceOver's wordings, "You are currently on a …" and "You are
+ * currently in a …" (VO_HELP); "empty group" in the second, as S08's ninth
+ * recording heard it, is taken as a group (VoiceOver reads S08's
+ * text-only list items as "Milk empty group (1 of 3) 1 of 3", FL-315).
+ */
 export function helpRole(phrase) {
-  const m = /^You are currently on (?:an? )?(.+?)(?:,| inside of |\.)/.exec(phrase);
-  return m ? m[1].trim() : null;
+  const m = /^You are currently (?:on|in) (?:an? )?(.+?)(?:,| inside of |\.)/.exec(phrase);
+  return m ? m[1].trim().replace(/^empty /, '') : null;
 }
 
 /**

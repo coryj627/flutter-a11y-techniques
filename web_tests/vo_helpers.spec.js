@@ -1,7 +1,7 @@
 // The VoiceOver helpers must fail loudly. These checks need macOS (for
 // osascript) but not VoiceOver itself.
 import { test, expect } from '@playwright/test';
-import { phraseForMove, runAppleScript, stopsToEnd, untilQuiet } from './vo/vo_logic.js';
+import { VO_HELP, phraseForMove, runAppleScript, stopsToEnd, untilQuiet } from './vo/vo_logic.js';
 
 test.skip(process.platform !== 'darwin', 'osascript is macOS only');
 
@@ -85,8 +85,31 @@ test('a read that fails ends the walk with its error, not with an end of screen'
 // message, and nothing else.
 const HELP = 'You are currently on a text field, inside of web content.';
 
+test('VoiceOver\'s help message is recognised in both its wordings, and only at the start of a phrase', () => {
+  const cases = [
+    [HELP, true],
+    ['You are currently on a button, inside of web content. To click this button, press Control-Option-Space.', true],
+    // S08's ninth web recording (2026-11-28).
+    ['You are currently in a empty group.', true],
+    ['You are currently in a list, inside of web content.', true],
+    // Ordinary speech with the same words, not at the start.
+    ['Note: You are currently on a trial plan', false],
+    ['Order 1 You are currently in a group', false],
+    ['Status: you are currently on hold', false],
+    // The words without the space after "on" or "in" that the message has.
+    ['You are currently online', false],
+    ['You are currently inside', false],
+    ['you are currently on a button', false],
+    ['', false],
+  ];
+  for (const [phrase, help] of cases) expect(VO_HELP.test(phrase), phrase).toBe(help);
+});
+
 test('a help message is replaced by the phrase logged for the same move', () => {
   expect(phraseForMove(HELP, 'Username edit text')).toBe('Username edit text');
+  expect(phraseForMove('You are currently in a empty group.', 'Bread empty group (3 of 3) 3 of 3'))
+    .toBe('Bread empty group (3 of 3) 3 of 3');
+  expect(phraseForMove('Note: You are currently on a trial plan', 'something else')).toBe('Note: You are currently on a trial plan');
   expect(phraseForMove('Save button', 'something else')).toBe('Save button');
   // A failed read of the log is an empty phrase, not the help message.
   expect(phraseForMove(HELP, '')).toBe('');

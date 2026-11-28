@@ -42,8 +42,14 @@ export async function stopsToEnd(step, start, max = 40) {
   return { stops, reachedEnd: false };
 }
 
-/** How VoiceOver's own help message for the element under its cursor starts. */
-export const VO_HELP = /^You are currently on /;
+/**
+ * How VoiceOver's own help message for the element under its cursor starts:
+ * "You are currently on a button, …", or "You are currently in a empty
+ * group." The second wording was first captured in S08's ninth web
+ * recording (2026-11-28, docs/evidence/probes/s08/voiceover-web-round9-fail.md.txt),
+ * and the principal decided that it is the same kind of message.
+ */
+export const VO_HELP = /^You are currently (?:on|in) /;
 
 /**
  * What to record for one move. On a text field with a description VoiceOver

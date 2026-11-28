@@ -52,10 +52,16 @@ export const screenStops = (slug) => {
   return [`heading level 1 ${title}`, ...lines];
 };
 
-/** The role a help message names: "list" for "You are currently on a list, …". */
+/**
+ * The role a help message names: "list" for "You are currently on a list, …".
+ * Both of VoiceOver's wordings, "You are currently on a …" and "You are
+ * currently in a …" (VO_HELP); "empty group" in the second, as S08's ninth
+ * recording heard it, is taken as a group (VoiceOver reads S08's
+ * text-only list items as "Milk empty group (1 of 3) 1 of 3", FL-315).
+ */
 export function helpRole(phrase) {
-  const m = /^You are currently on (?:an? )?(.+?)(?:,| inside of |\.)/.exec(phrase);
-  return m ? m[1].trim() : null;
+  const m = /^You are currently (?:on|in) (?:an? )?(.+?)(?:,| inside of |\.)/.exec(phrase);
+  return m ? m[1].trim().replace(/^empty /, '') : null;
 }
 
 /**

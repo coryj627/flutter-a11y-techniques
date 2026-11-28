@@ -122,11 +122,15 @@ export const screenStops = (slug) => {
  * for a text element or a progress indicator has not been heard in any
  * recording of this project; the wording is assumed to follow the list's
  * and the button's, and the rule is tested only on made-up walks.
+ * Both of VoiceOver's wordings, "You are currently on a …" and "You are
+ * currently in a …" (VO_HELP); "empty group" in the second, as S08's ninth
+ * recording heard it, is taken as a group (VoiceOver reads S08's
+ * text-only list items as "Milk empty group (1 of 3) 1 of 3", FL-315).
  */
 export function helpRole(phrase) {
-  const m = /^You are currently on (?:an? )?(.+?)(?:,| inside of |\.)/.exec(phrase);
+  const m = /^You are currently (?:on|in) (?:an? )?(.+?)(?:,| inside of |\.)/.exec(phrase);
   if (!m) return null;
-  const role = m[1].trim();
+  const role = m[1].trim().replace(/^empty /, '');
   return role === 'text element' ? 'text' : role;
 }
 

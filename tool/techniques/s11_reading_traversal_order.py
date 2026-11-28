@@ -100,7 +100,7 @@ VOICEOVER_WEB_METHOD = (
     "wins, across a gap the next stop must be the next expected one or the one after it, and a "
     "walk that ran out of moves is wrong. Only a walk with no wrong stop and a gap, or a stop read "
     "as an empty phrase, is walked again, up to three walks, each its own row (`-walk-<n>`), and "
-    "it never passes. VoiceOver's own help message (\"You are currently on ...\") is left out only "
+    "it never passes. VoiceOver's own help message (\"You are currently on ...\" or \"in ...\") is left out only "
     "at the position of the stop before it, whose reading speaks the role the help names; it stays "
     "in the walk's row, and the web tree spec judges the transcript again from its rows by the "
     "same rule, from the positions row. "
