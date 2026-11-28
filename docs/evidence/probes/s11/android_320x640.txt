@@ -1,0 +1,45 @@
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 46968, started 2026-11-26 22:24:22, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S11" (pid 86880, started 2026-11-26 22:44:29, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-acd46b98add9e7e8e). Waiting for it to finish.
+The devices are in use by "evidence S11" (pid 86880, started 2026-11-26 22:44:29, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-acd46b98add9e7e8e). Waiting for it to finish.
+The devices are in use by "evidence S11" (pid 86880, started 2026-11-26 22:44:29, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-acd46b98add9e7e8e). Waiting for it to finish.
+The devices are in use by "evidence S11" (pid 86880, started 2026-11-26 22:44:29, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-acd46b98add9e7e8e). Waiting for it to finish.
+The devices are in use by "evidence S11" (pid 86880, started 2026-11-26 22:44:29, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-acd46b98add9e7e8e). Waiting for it to finish.
+The devices are in use by "evidence S11" (pid 86880, started 2026-11-26 22:44:29, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-acd46b98add9e7e8e). Waiting for it to finish.
+The devices are in use by "evidence S11" (pid 86880, started 2026-11-26 22:44:29, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-acd46b98add9e7e8e). Waiting for it to finish.
+The devices are in use by "evidence S11" (pid 86880, started 2026-11-26 22:44:29, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-acd46b98add9e7e8e). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 19065, started 2026-11-26 22:52:08, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 19065, started 2026-11-26 22:52:08, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 19065, started 2026-11-26 22:52:08, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 19065, started 2026-11-26 22:52:08, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 19065, started 2026-11-26 22:52:08, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S10" (pid 19065, started 2026-11-26 22:52:08, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-aeb4abf07480927f9). Waiting for it to finish.
+The devices are in use by "evidence S06" (pid 38976, started 2026-11-26 22:58:03, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-a7e78a772289bdcdc). Waiting for it to finish.
+The devices are in use by "evidence S06" (pid 38976, started 2026-11-26 22:58:03, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-a7e78a772289bdcdc). Waiting for it to finish.
+The devices are in use by "evidence S06" (pid 38976, started 2026-11-26 22:58:03, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-a7e78a772289bdcdc). Waiting for it to finish.
+The devices are in use by "evidence S06" (pid 38976, started 2026-11-26 22:58:03, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-a7e78a772289bdcdc). Waiting for it to finish.
+The devices are in use by "evidence S06" (pid 38976, started 2026-11-26 22:58:03, in /Users/cory/dev/flutter-a11y-techniques/.claude/worktrees/agent-a7e78a772289bdcdc). Waiting for it to finish.
+during the run: Physical size: 1080x2424 Override size: 320x640  Physical density: 420 Override density: 160 
+> Task :app:connectedDebugAndroidTest
+BUILD SUCCESSFUL in 2m 41s
+bad-columns-mixed as read at this size:
+11-26 23:03:52.455 23524 23555 I S11TREE : bad-columns-mixed: [Route | heading, Bring | heading, Park at the gate., Water, Climb the ridge., A map, Walk back., Save route | button, Save list | button, Route saves: 0, List saves: 0]
+after reset: Physical size: 1080x2424  Physical density: 420 

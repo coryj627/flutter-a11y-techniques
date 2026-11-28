@@ -1,0 +1,18 @@
+#!/bin/sh
+# S11 probe on iOS, under tool/with_devices.py (throwaway; kept as
+# docs/evidence/probes/s11/ios_probe.sh.txt). Run from the worktree root,
+# after `fvm flutter build ios --simulator --debug -t lib/probe.dart` and
+# `xcodebuild build-for-testing` into build/ios_uitest.
+xcrun simctl list devices booted | grep -i "iphone"
+xcrun simctl ui booted content_size
+cd ios || exit 1
+run() {
+  echo "== $1"
+  xcodebuild test-without-building -workspace Runner.xcworkspace -scheme Runner \
+    -destination "platform=iOS Simulator,name=iPhone 17" \
+    -only-testing:"RunnerUITests/ProbeS11UITests/$1" \
+    -derivedDataPath ../build/ios_uitest 2>&1 | grep -E "S11PROBE|error:|passed|failed|skipped" | grep -v "Test Suite"
+}
+for t in ${TESTS:-testTree testVoiceOver}; do run $t; done
+xcrun simctl terminate booted dev.fluttera11y.flutterA11yTechniques 2>/dev/null
+exit 0

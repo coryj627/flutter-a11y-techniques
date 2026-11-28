@@ -1,0 +1,196 @@
+// S11 probe (throwaway, not committed; kept as
+// docs/evidence/probes/s11/ProbeS11Test.kt.txt). Runs against lib/probe.dart
+// (Gradle -Ptarget=lib/probe.dart). probe() dumps each fixture's nodes in the
+// tree's order, with the node each one is to be read after
+// (getTraversalAfter, which Flutter sets), and for the fixtures with buttons
+// the stops of Tab from a keyboard registered with the shell's uinput tool
+// (as V14's test does). talkBackOrder(), with TalkBack on: puts TalkBack's
+// focus on "Before rNN" by action, then presses TalkBack's "next" keys on
+// that keyboard (Alt+Right, then, if that moved nothing, Search+Right) and
+// logs, after each press, the node TalkBack's focus is on
+// (findFocus(FOCUS_ACCESSIBILITY)); a FOCUS marker before each press lets
+// tool/talkback.py's parse_speech give what was said for it.
+package dev.fluttera11y.flutter_a11y_techniques
+
+import android.app.UiAutomation
+import android.content.Intent
+import android.graphics.Rect
+import android.os.ParcelFileDescriptor
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.After
+import org.junit.Test
+import org.junit.runner.RunWith
+
+private class ProbeKeyboard(automation: UiAutomation, dumpsys: () -> String) : AutoCloseable {
+    private val fds: Array<ParcelFileDescriptor> = automation.executeShellCommandRw("uinput -")
+    private val stdin = ParcelFileDescriptor.AutoCloseOutputStream(fds[1])
+
+    init {
+        send("""{"id":1,"command":"register","name":"$NAME","vid":4660,"pid":22137,"bus":"usb",""" +
+            """"configuration":[{"type":"UI_SET_EVBIT","data":["EV_KEY","EV_SYN"]},""" +
+            """{"type":"UI_SET_KEYBIT","data":["KEY_TAB","KEY_SPACE","KEY_ENTER","KEY_LEFTSHIFT",""" +
+            """"KEY_LEFTALT","KEY_LEFTMETA","KEY_RIGHT","KEY_LEFT","KEY_DOWN","KEY_UP"]}]}""")
+        val end = System.currentTimeMillis() + 10_000
+        while (!dumpsys().contains(NAME)) {
+            if (System.currentTimeMillis() > end) throw AssertionError("the uinput keyboard was not registered")
+            Thread.sleep(200)
+        }
+        Thread.sleep(1_000)
+    }
+
+    private fun send(json: String) {
+        stdin.write((json + "\n").toByteArray())
+        stdin.flush()
+    }
+
+    /** Presses [keys] down in order, then lets them go in reverse order. */
+    fun chord(vararg keys: String) {
+        val down = keys.joinToString(",") { "\"EV_KEY\",\"$it\",1,\"EV_SYN\",\"SYN_REPORT\",0" }
+        val up = keys.reversed().joinToString(",") { "\"EV_KEY\",\"$it\",0,\"EV_SYN\",\"SYN_REPORT\",0" }
+        send("""{"id":1,"command":"inject","events":[$down,$up]}""")
+    }
+
+    override fun close() {
+        stdin.close()
+        ParcelFileDescriptor.AutoCloseInputStream(fds[0]).use { it.readBytes() }
+    }
+
+    companion object {
+        const val NAME = "S11 probe keyboard"
+    }
+}
+
+@RunWith(AndroidJUnit4::class)
+class ProbeS11Test : TechniqueTest("S11") {
+    private val tag = "S11PROBE"
+    private val ids = (1..20).map { "r%02d".format(it) }
+    private val withButtons = setOf("r11", "r12", "r15", "r19", "r20")
+    private var keyboard: ProbeKeyboard? = null
+
+    private fun keys(): ProbeKeyboard =
+        keyboard ?: ProbeKeyboard(automation) { device.executeShellCommand("dumpsys input") }.also { keyboard = it }
+
+    @After
+    fun removeKeyboard() {
+        keyboard?.close()
+        keyboard = null
+    }
+
+    private fun launch(fixture: String) {
+        val intent = Intent(inst.targetContext, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .putExtra("route", "/$fixture")
+        inst.targetContext.startActivity(intent)
+        val end = System.currentTimeMillis() + 20_000
+        while (!anyWindowHas { it.viewIdResourceName == "$fixture-after" }) {
+            if (System.currentTimeMillis() > end) throw AssertionError("$fixture did not open")
+            Thread.sleep(250)
+        }
+        device.waitForIdle()
+        Thread.sleep(1_000)
+    }
+
+    private fun collect(root: AccessibilityNodeInfo?, depth: Int, out: MutableList<Pair<Int, AccessibilityNodeInfo>>) {
+        if (root == null) return
+        out.add(depth to root)
+        for (i in 0 until root.childCount) collect(root.getChild(i), depth + 1, out)
+    }
+
+    private fun appNodes(): List<Pair<Int, AccessibilityNodeInfo>> {
+        val out = mutableListOf<Pair<Int, AccessibilityNodeInfo>>()
+        for (w in automation.windows) if (w.type == AccessibilityWindowInfo.TYPE_APPLICATION) collect(w.root, 0, out)
+        return out
+    }
+
+    private fun label(n: AccessibilityNodeInfo?): String {
+        if (n == null) return "(null)"
+        return n.contentDescription?.toString().orEmpty().ifEmpty { n.text?.toString().orEmpty() }
+            .replace("\n", "\\n").ifEmpty { "(${n.className} no name)" }
+    }
+
+    private fun describe(n: AccessibilityNodeInfo): String {
+        val r = Rect().also { n.getBoundsInScreen(it) }
+        val after = n.traversalAfter?.let { label(it) } ?: "-"
+        val before = n.traversalBefore?.let { label(it) } ?: "-"
+        return "${n.viewIdResourceName ?: "-"} | ${n.className} | \"${label(n)}\" $r " +
+            "after=\"$after\" before=\"$before\" focusable=${n.isFocusable} children=${n.childCount}"
+    }
+
+    private fun own(id: String) = appNodes().filter { (_, n) ->
+        val l = label(n)
+        l.contains("$id ") || l.startsWith("Before $id") || l.startsWith("After $id")
+    }
+
+    private fun focusedLabel(): String {
+        val f = appNodes().map { it.second }.lastOrNull { it.isFocused } ?: return "(none)"
+        return label(f)
+    }
+
+    @Test
+    fun probe() {
+        for (id in ids) {
+            launch(id)
+            Log.i(tag, "==== $id tree")
+            for ((depth, n) in own(id)) Log.i(tag, "${"  ".repeat(depth)}${describe(n)}")
+            Log.i(tag, "$id tree order: ${own(id).joinToString(" / ") { label(it.second) }}")
+            if (id in withButtons) {
+                for ((name, chord) in listOf("Tab" to arrayOf("KEY_TAB"), "Shift+Tab" to arrayOf("KEY_LEFTSHIFT", "KEY_TAB"))) {
+                    launch(id)
+                    val stops = mutableListOf<String>()
+                    for (i in 0 until 6) {
+                        keys().chord(*chord)
+                        Thread.sleep(700)
+                        stops.add(focusedLabel())
+                    }
+                    Log.i(tag, "$id $name stops: ${stops.joinToString(" -> ")}")
+                }
+            }
+        }
+    }
+
+    private fun a11yFocused(): String {
+        for (w in automation.windows) {
+            val f = w.root?.findFocus(AccessibilityNodeInfo.FOCUS_ACCESSIBILITY)
+            if (f != null) return label(f)
+        }
+        return "(none)"
+    }
+
+    @Test
+    fun talkBackOrder() {
+        assumeTalkBack()
+        keys()
+        for (id in ids) {
+            launch(id)
+            Thread.sleep(6_000)
+            talkBackFocus("Before $id") { own(id).first { label(it.second) == "Before $id" }.second }
+            Thread.sleep(2_500)
+            Log.i(tag, "$id start on ${a11yFocused()}")
+            var chord = arrayOf("KEY_LEFTALT", "KEY_RIGHT")
+            val stops = mutableListOf<String>()
+            for (i in 0 until 14) {
+                val marker = "s11-$id-$i"
+                Log.i(talkBackTag, "FOCUS $marker")
+                keys().chord(*chord)
+                Thread.sleep(2_500)
+                val now = a11yFocused()
+                if (i == 0 && now == "Before $id") {
+                    Log.i(tag, "$id Alt+Right did not move; trying Search+Right")
+                    chord = arrayOf("KEY_LEFTMETA", "KEY_RIGHT")
+                    keys().chord(*chord)
+                    Thread.sleep(2_500)
+                    stops.add("[meta] " + a11yFocused())
+                } else {
+                    stops.add(now)
+                }
+                Log.i(tag, "$marker on ${stops.last()}")
+                if (stops.last().startsWith("After $id") || stops.last().contains("After $id")) break
+            }
+            Log.i(tag, "$id TalkBack order: ${stops.joinToString(" / ")}")
+            Log.i(talkBackTag, "END $id")
+        }
+    }
+}

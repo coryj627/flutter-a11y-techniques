@@ -1,0 +1,17 @@
+// Throwaway: serves the S11 probe build (build/web_probe) for
+// s11_probe.spec.js. Not committed; kept as
+// docs/evidence/probes/s11/s11probe.config.js.txt.
+import { defineConfig } from '@playwright/test';
+import { webServer } from './support/ports.js';
+
+const port = Number(process.env.S11_PORT ?? 29871);
+
+export default defineConfig({
+  testDir: '.',
+  testMatch: /s11_probe\.spec\.js$/,
+  reporter: 'list',
+  workers: 1,
+  timeout: 300_000,
+  use: { baseURL: `http://127.0.0.1:${port}`, browserName: 'chromium' },
+  webServer: webServer(process.env.S11_BUILD ?? 'build/web_probe', port),
+});
