@@ -469,6 +469,26 @@ its raw output, and the analyser. Every figure here is read from pixels;
   the end, back to `bad-faint-edge`'s field, read "" at its exact position
   in both browsers. So on the web the hint is spoken, twice, once the
   field has focus ([FL-142](../flutter-limitations.md#fl-142)).
+- **The second web VoiceOver recording** (`docs/evidence/V01/voiceover-web.md`,
+  recorded 2026-11-28, with the field rules) passed: 16 walks of 16, each
+  complete on its first walk, every end witnessed, no help message read.
+  The fields, by browser (the forward walk; the back witness where the
+  field was the stop before the last):
+  - `good-material`: Chromium "Email edit text", the field read before its
+    focus (in round 1 it read "Email Required Required edit text" in
+    both); WebKit "Email Required Required edit text".
+  - `good-cupertino`: "Email Required Required edit text" in both, and
+    the same on the move back of the end witness, at the field's position.
+  - `bad-cupertino-placeholder`: Chromium "Email Required edit text", then
+    "Email Required Required edit text" at the same position, logged as a
+    re-read on the positions row (the only re-read in the recording), and
+    the same on the move forward of the end witness; WebKit "Email
+    Required Required edit text" once, and the same forward.
+  - `bad-faint-edge`: "Email edit text" in both, and the move forward of
+    the end witness "" at its position, in both, as in round 1.
+  So a field's form changed between the two recordings in Chromium, as
+  round 1 had shown it can within one walk; the rows judge only what
+  section 6 says they still prove.
 - **The shared iOS simulator during the build** (notes, not findings).
   From about 05:07 on 2026-11-28 the simulator drew no dark mode: the
   appearance set by `XCUIDevice.appearance`, by `simctl ui appearance

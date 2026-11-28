@@ -2378,8 +2378,13 @@ yet), **Fixed in x.y** (verified on that version).
     Required edit text" for the Material field in Chromium and in WebKit,
     and for the Cupertino fields "Email Required Required edit text" or,
     read before the focus, "Email Required edit text", varying within one
-    walk. TalkBack and VoiceOver on iOS did not speak the Material field's
-    hint (V01's transcripts).
+    walk. In V01's second recording (`docs/evidence/V01/voiceover-web.md`,
+    recorded 2026-11-28) the Material field read "Email edit text" in
+    Chromium, before its focus, and "Email Required Required edit text" in
+    WebKit; the Cupertino fields "Email Required Required edit text" in
+    both, and once in Chromium "Email Required edit text" first, then the
+    other form at the same position. TalkBack and VoiceOver on iOS did not
+    speak the Material field's hint (V01's transcripts).
   - The earlier sighting: F02's web transcript reads a field's hint in its
     name ("Username 4 to 10 characters, no spaces. edit text").
   - Effect: a screen-reader user hears the hint as part of the field's
